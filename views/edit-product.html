@@ -1,0 +1,92 @@
+<div class="product-form">
+
+    <form name="product_form" id="product-form" enctype="multipart/form-data" method="post" form-validation>
+        <div ng-hide="productFormDiv">
+            <input type="hidden" name="Language" value="English" ng-model="pid">
+            <div class="form-group">
+                <label for="title">Add Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Title" ng-model="title">
+            </div>
+
+            <h3>Pricing</h3>
+            <div class="row">
+                <div class="col-xs-5">
+                    <div class="form-group">
+                        <label for="currency">Currency</label>
+                        <select class="form-control" id="currency" name="currency">
+                            <option value="INR">Indian National Rupee</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xs-5">
+                    <div class="form-group">
+                        <label for="price">Price</label>
+                        <input type="text" class="form-control" id="price" name="price" placeholder="Price" ng-model="price">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="product description">Description</label>
+                <textarea class="form-control" name="description" id="description" rows="3" ng-model="description"></textarea>
+            </div>
+            <div class="form-group" ng-hide="previewImgDiv">
+                <p>
+                    <a href="{{previewImageUrl}}" target="_blank">View Image</a>
+                </p>
+            </div>
+            <div class="form-group">
+                <label for="exampleInputFile">Add a preview image
+                </label>
+                <input type="file" id="preview_image" name="preview_image" accept="image/gif, image/jpeg, image/png, image/bmp" preview-image-model="previewFile">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="watermark_enabled" id="watermark_enabled" ng-model="watermark_enabled">&nbsp; &nbsp;Enable Watermark
+                </label>
+            </div>
+            <div class="custom-options">
+                <h3>Custom Options</h3>
+                <p>These fields will be part of the checkout form. Name, Email, and Phone-number fields are already included in the checkout form.</p>
+            </div>
+
+            <div id="custom-forms-editable">
+                <div class="form-group" ng-repeat="custom_param in custom_params">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="custom_name_1" placeholder="Name" ng-model="custom_param.key" name="custom_name_{{custom_param.id}}">
+                        </div>
+                        <div class="col-xs-5">
+                            <input type="text" class="form-control" id="custom_desc_1" placeholder="Description" ng-model="custom_param.value" name="custom_desc_{{custom_param.id}}">
+                        </div>
+                        <div class="col-xs-1">
+                            <button type="button" class="btn" ng-click="_trash_custom_div($index)">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" id="add-field-button" ng-click="_append_fields()">Add Custom Fields</button>
+            </div>
+            <div alt="Proceed to Recharge" class="btn-spinner">
+                <div class="spinner" id="spinner-dev"></div>
+                <button type="submit" class="btn btn-primary proceed" id="update-detail">Update Details</button>
+            </div>
+        </div>
+    </form>
+    <div class="text-center" ng-hide="loading">
+        <img src="assets/images/spinner-md.gif">
+    </div>
+
+    <div class="text-center" ng-hide="successFormSubmission">
+        <p>
+            <a href="#products">Go back to product list</a>
+        </p>
+        <p>
+            Your product is successfully updated!
+        </p>
+    </div>
+
+</div>

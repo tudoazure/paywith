@@ -1,0 +1,112 @@
+<div class="start-selling-table">
+    <button type="button" class="btn btn-primary" ng-click="createProduct('/product/create/')">Create Digital Goods</button>
+
+    <div class="text-center">
+        <p>{{noDataMessage}}</p>
+    </div>
+
+    <div class="text-center" ng-hide="loading">
+        <img src="assets/images/spinner-md.gif">
+    </div>
+
+    <div class="search-result" ng-hide="searchResultDiv">
+        <input ng-model="searchText" class="form-control" placeholder="Search..">
+    </div>
+
+    <table id="products-table" class="table table-bordered table-hover" ng-hide="productsTable">
+        <thead>
+            <tr>
+                <th width="5%">Id</th>
+                <th width="10%">Uploaded</th>
+                <th width="15%">Updated at</th>
+                <th width="30%">Title</th>
+                <th width="20%">Price</th>
+                <th width="25%">Active</th>
+                <th width="25%">Copy</th>
+                <th width="15%">Email</th>
+                <th width="15%">Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr ng-repeat="product in products | filter:searchText">
+                <td>{{product.button_id}}</td>
+                <td>{{product.created_on | date:'dd-MM-yyyy h:mma'}}</td>
+                <td>{{product.updated_on | date:'dd-MM-yyyy h:mma'}}</td>
+                <td>{{product.title}}</td>
+                <td>{{product.amount | currency:"Rs."}}</td>
+                <td>
+                    <input type="checkbox" name="product-active" id="checkbox-{{product.button_id}}" ng-click="productActive(product)" rel="{{product.button_id}}" data-size="mini" ng-checked="product.status == 'ACTIVE'">
+
+                </td>
+                <td>
+                    <button class="btn btn-default" ng-click="openScriptModal(product)" ng-hide="product.status != 'ACTIVE'">Script</button>
+
+                </td>
+                <td>
+                    <button class="btn btn-default" ng-click="openInviteModal(product)" ng-hide="product.status != 'ACTIVE'">Invite</button>
+
+                </td>
+                <td>
+                    <a href="#product/edit/{{product.button_id}}">Edit</a>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+    <div class="pagination pull-right" ng-hide="paginationDiv">
+        <ul class="pager">
+            <li ng-class="{disabled: prevLimit == true}">
+                <a href ng-click="prevPage()">&larr; Previous</a>
+            </li>
+            <li ng-class="{disabled: nextLimit == true}">
+                <a href ng-click="nextPage()">Next &rarr;</a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+<script type="text/ng-template" id="scriptModal.html">
+    <div class="modal-header">
+            <h3>Button Script</h3>
+        </div>
+        <div class="modal-body">
+        <textarea class="form-control" rows="3">
+ <script src="{{payButtonHost}}" pptmdata-button='paywithdg' pptmdata-url="{{serverButtonHost}}" pptmdata-pbid="{{pbid}}">
+        &lt;/script&gt
+        
+       
+
+</textarea>
+
+</div>
+<div class="modal-footer">
+
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
+</script>
+<script type="text/ng-template" id="inviteModal.html">
+    <form name="emailTextArea" email-text-area>
+        <div class="modal-header">
+            <h3>Invite to download</h3>
+        </div>
+        <div class="modal-body">
+        
+        <div class="form-group">
+            <textarea class="form-control" name="inviteEmails" rows="4" ng-model="inviteData" ng-list ng-hide="inviteTextArea"></textarea>
+            </div>
+            <input type="hidden" name="Language" value="English" ng-model="bproductid">
+            <p ng-hide="inviteProcessLoader"><img src="assets/images/spinner-md.gif"></p>
+            <p ng-hide="inviteInputDesc">Please enter comma (",") seperated email list.</p>
+            <p class="text-danger">{{emailValidityAlert}}</p>
+            
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-warning" ng-hide="inviteButton">Invite</button>
+    </form>
+            
+            
+            <button class="btn btn-primary" ng-click="cancel()">Close</button>
+        </div>
+</script>

@@ -1,0 +1,72 @@
+<html>
+
+<head>
+
+
+    <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+    <!-- build:js src/js/vendor.min.js -->
+    <script src="scripts/vendor/bootstrapValidator.js"></script>
+    <script src="scripts/vendor/jquery.min.js"></script>
+    <!-- /build -->
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js">
+    </script>
+    <!-- build:js config.js -->
+    <script src="config.js"></script>
+
+    <!-- /build -->
+
+    <script src="custom.js"></script>
+
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="header">
+
+    </div>
+    <div class="demo-payment" style="margin-top:150px;">
+
+        <div class="text-center" ng-hide="loading">
+            <img src="assets/images/spinner-md.gif" alt="Loading...">
+        </div>
+
+    </div>
+    <div class="payment-button">
+
+
+
+    </div>
+
+
+</body>
+
+</html>
+<script type="text/javascript">
+    var code = __get_parameter_by_name("code");
+    var param = {};
+    param.code= code;
+    param.is_seller = true;
+    param.device_type = "web";
+    param.device_id = "web-device-id";
+    param.device_token = "web-token";
+    param.device_detail = "["+navigator.userAgent+"]";  
+        __get_auth_token(param, function(response){
+            
+            
+            createCookie("paytm_session_key", response.data.session.access_token, 10); 
+            createCookie("ses_user", response.data.user.username, 10);
+            createCookie("paytm_user", JSON.stringify(response.data.user), 10);
+            window.location.href = appConfig.APP_HOST;
+            
+            
+        });
+</script>

@@ -1,0 +1,93 @@
+<div class="order-list-table">
+    <div class="text-center">
+        <p>{{noDataMessage}}</p>
+    </div>
+    <div class="text-center" ng-hide="loading">
+        <img src="assets/images/spinner-md.gif">
+    </div>
+    <div class="search-result" ng-hide="searchResultDiv">
+        <input ng-model="searchText" class="form-control" placeholder="Search..">
+    </div>
+    <table id="order-table" class="table table-bordered table-hover" order-table ng-hide="orderTable">
+        <thead>
+            <tr>
+                <th width="10%">Order Id</th>
+                <th width="10%">MUOID</th>
+                <th width="10%">Order Date</th>
+                <th width="10%">User Details</th>
+                <th width="10%">Title</th>
+                <th width="10%">Amount</th>
+                <th width="10%">Resend Email</th>
+                <th width="10%">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="order in orders | filter:searchText">
+                <td>{{order.transaction_id}}</td>
+                <td>
+                    <p ng-if="order.muoid != '[object Object]'">{{order.muoid}}</p>
+                </td>
+                <td>{{order.transaction_created_time | date:'dd-MM-yyyy h:mma'}}</td>
+                <td>
+                    <button class="btn btn-default" ng-click="openViewModal($index)" ng-hide="order.parent_type == 'PWB'">View</button>
+                </td>
+                <td>{{order.title}}</td>
+                <td>{{order.amount | currency:"Rs." }}</td>
+                <td>
+                    <button class="btn btn-default" ng-click="openResendModal(order)" ng-hide="order.parent_type == 'PWB'">Re-send</button>
+                </td>
+                <td>{{order.status}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="pagination pull-right" ng-hide="paginationDiv">
+        <ul class="pager">
+            <li ng-class="{disabled: prevLimit == true}">
+                <a href ng-click="prevPage()">&larr; Previous</a>
+            </li>
+            <li ng-class="{disabled: nextLimit == true}">
+                <a href ng-click="nextPage()">Next &rarr;</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="viewModal.html">
+    <div class="modal-header">
+        <h3>View Details</h3>
+    </div>
+    <div class="modal-body" view-detail-body>
+        
+        <h5>User Details</h5>
+        <div class="row" ng-repeat="(key, value) in items">
+            <div class="col-md-4">{{key}}</div>
+            <div class="col-md-6">{{value}}</div>
+        </div>
+        <h5>Custom Params</h5>
+        <div class="row" ng-repeat="(key, value) in custom_params">
+            <div class="col-md-4">{{key}}</div>
+            <div class="col-md-6">{{value}}</div>
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+    
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+</script>
+<script type="text/ng-template" id="reSendModal.html">
+    <div class="modal-header">
+        <h3>Button Script</h3>
+    </div>
+    <div class="modal-body">
+    <p>Do you want to resend this email</p>
+      
+    </div>
+    <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="yes()">Yes</button>
+        <button class="btn btn-warning" ng-click="cancel()">No</button>
+        
+    
+    </div>
+</script>

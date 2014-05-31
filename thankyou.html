@@ -1,0 +1,72 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-GB">
+
+<head>
+    <title>Paytm</title>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="robots" content="index, follow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+
+    <!-- build:css src/css/style.min.css -->
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+    <!-- /build -->
+
+    <!-- build:js config.js -->
+    <script src="config.js"></script>
+    <!-- /build -->
+
+    <!-- build:js src/js/vendor.min.js -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script src="scripts/vendor/jquery.form.js"></script>
+    <script src="scripts/vendor/spin.min.js"></script>
+    <script src="scripts/vendor/bootstrapValidator.js"></script>
+    <!-- /build -->
+
+    <script src="custom.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div alt="Mobile Recharges &amp; Bill Payments" class="logo">
+            <a href="/"></a>
+        </div>
+        <div class="user-view pull-right" auth-user-div>
+            <div class="myaccount pull-left">
+                <div class="login" ng-hide="loginDivView">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="sell-digital" class="row-fluid">
+        <div class="text-center">
+            <h3>Thank you, your payment is successfully done</h3>
+            <h4>Transaction id:
+                <p id="txn_id"></p>
+            </h4>
+            <h4>Amount Paid:
+                <p id="txn_amount"></p>
+            </h4>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+<script>
+    var txn_id = __get_parameter_by_name("transaction_id");
+    var txn_amount = __get_parameter_by_name("amount");
+    $("#txn_id").html(txn_id);
+    $("#txn_amount").html(txn_amount);
+</script>
+

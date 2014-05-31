@@ -1,0 +1,167 @@
+<div class="button-view">
+    <div class="create_button" ng-show="createButton">
+        <button type="button" class="btn btn-primary" ng-click="action('/button/create/')">Create Button</button>
+    </div>
+
+    <div class="text-center" ng-show="loading">
+        <img src="assets/images/spinner-md.gif">
+    </div>
+    <div class="text-center">
+        <p>{{noDataMessage}}</p>
+    </div>
+
+
+    <div class="button-list" ng-show="buttonList">
+
+        <div class="search-result" ng-hide="searchResultDiv">
+            <input ng-model="searchText" class="form-control" placeholder="Search..">
+        </div>
+        <table id="button-table" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th width="25%">Id</th>
+                    <th width="25%">Name</th>
+                    <th width="15%">Uploaded</th>
+                    <th width="15%">Updated at</th>
+                    <th width="15%">Scripts</th>
+                    <th width="20%">Secret</th>
+                    <th width="10%">Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr ng-repeat="button in buttons | filter:searchText">
+                    <td>{{button.button_id}}</td>
+                    <td>{{button.button_name}}</td>
+                    <td>{{button.created_on | date:'dd-MM-yyyy h:mma'}}</td>
+                    <td>{{button.updated_on | date:'dd-MM-yyyy h:mma'}}</td>
+                    <td>
+                        <button class="btn btn-default" ng-click="openScriptModal(button)">Script</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-default" ng-click="viewSecretModal(button)">View</button>
+                    </td>
+                    <td>
+                        <a href="#button/update/{{button.button_id}}">Edit</a>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+        <div class="pagination pull-right" ng-hide="paginationDiv">
+            <ul class="pager">
+                <li ng-class="{disabled: prevLimit == true}">
+                    <a href ng-click="prevPage()">&larr; Previous</a>
+                </li>
+                <li ng-class="{disabled: nextLimit == true}">
+                    <a href ng-click="nextPage()">Next &rarr;</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="button-form" ng-show="buttonForm">
+        <form name="button_form" id="button-form" enctype="multipart/form-data" method="post" button-form-validation>
+            <input type="hidden" name="Language" value="English" ng-model="button_id">
+
+            <div class="form-group">
+                <label for="button name">Button Name</label>
+                <input type="text" class="form-control" id="button_name" name="button_name" ng-model="button_name" placeholder="Enter Button Name">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Button Description</label>
+                <textarea class="form-control" name="description" id="description" rows="3" ng-model="description"></textarea>
+            </div>
+
+            <div class="form-group">
+
+                <label for="title">Title</label>
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="title" name="title" ng-model="title" placeholder="Enter Title (Leave blank to enable dynamic behaviour )" ng-readonly="!titleDisabled">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="checkbox" ng-model="titleDisabled" ng-click="titleDisable()">Enable Title
+
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+
+            <div class="form-group">
+                <label for="amount">Enter Amount</label>
+                <div class="row">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="amount" name="amount" ng-model="amount" placeholder="Enter Amount (Leave blank to enable dynamic behaviour)" ng-readonly="!amountDisabled">
+                    </div>
+                    <div class="col-md-4">
+                        <input type="checkbox" ng-model="amountDisabled" ng-click="amountDisable()">Enable Amount
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="return_success_url">Return Success Url</label>
+                <input type="text" class="form-control" id="return_success_url" name="return_success_url" ng-model="return_success_url" placeholder="Enter Success Url">
+            </div>
+            <div class="form-group">
+                <label for="return_cancel_url">Return Cancel Url</label>
+                <input type="text" class="form-control" id="return_cancel_url" name="return_cancel_url" ng-model="return_cancel_url" placeholder="Enter Cancel Url">
+            </div>
+            <div class="form-group">
+                <label for="notify_url">Return Notify Url</label>
+                <input type="text" class="form-control" id="notify_url" name="notify_url" ng-model="notify_url" placeholder="Enter Notify Url">
+            </div>
+            <div class="form-group">
+                <label for="custom_params">Custom Params</label>
+                <textarea class="form-control" name="custom_params" id="custom_params" rows="3" ng-model="custom_params"></textarea>
+            </div>
+            <div class="form-group">
+
+                <button type="submit" class="btn btn-primary proceed" id="save-detail">{{buttonSubmitText}}</button>
+            </div>
+        </form>
+    </div>
+    <div class="button-script" ng-show="buttonScriptDiv">
+        <p>{{buttonConfirmMessage}}</p>
+        <textarea class="form-control" name="button_script" id="button_script" rows="5" ng-model="button_script">
+        </textarea>
+
+    </div>
+
+</div>
+<script type="text/ng-template" id="buttonScriptModal.html">
+    <div class="modal-header">
+                        <h3>Button Script</h3>
+                    </div>
+                    <div class="modal-body">
+                    <textarea class="form-control" rows="4">
+            
+                    <script src="{{payButtonHost}}?button_id={{button_id}}" {{scriptParams}} >
+            &lt;/script&gt
+            
+            </textarea>
+            
+            </div>
+            <div class="modal-footer">
+            
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+</script>
+
+<script type="text/ng-template" id="viewSecretModal.html">
+    <div class="modal-header">
+                        <h3>Button Secret</h3>
+                    </div>
+                    <div class="modal-body">
+                    {{viewSecret}}
+            </div>
+            <div class="modal-footer">
+            
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+</script>
