@@ -140,7 +140,7 @@ function logOut() {
     }
  };
 
- function login(url, username, password){
+ function login(url, username, password, isSignup){
  	var xmlhttp;
  	if(username && password){
 	 	xmlhttp=new XMLHttpRequest();
@@ -153,8 +153,12 @@ function logOut() {
 		};
 		xmlhttp.open("POST",url,true);
 		xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-		xmlhttp.send("username="+username+"&device_token=web-token&is_seller=true&device_type=web&device_detail=["+navigator.userAgent+"]&password="+password+"&device_id=dev-id");
-		//xmlhttp.send("username=bhupesh00gupta@gmail.com&device_token=token&is_seller=true&device_type=web&device_detail=User-Agent&password=Cssgrgt98oer&device_id=dev-id");
+        // request_code=d7eccda1-df9a-43f6-b2bc-f0b5e4654d9b&is_seller=false&device_type=android&device_id=14&device_token=4fd598de-51c7-476a-9577-ba614e354d6f&device_detail=[android-4.4]
+        if(isSignup){
+           xmlhttp.send("device_token=web-token&is_seller=true&device_type=web&device_detail=["+navigator.userAgent+"]&request_code="+password+"&device_id=dev-id"); 
+       }else{
+            xmlhttp.send("username="+username+"&device_token=web-token&is_seller=true&device_type=web&device_detail=["+navigator.userAgent+"]&password="+password+"&device_id=dev-id");
+       }
 	}
  };
 
@@ -165,8 +169,8 @@ function logOut() {
  			if(response.data){
  				var username = response.data.email;
  				var password = response.data.code;
- 				var loginUrl = "https://paywith.paytm.com/api/core/seller/login-api-with-request-code/"
- 				login(loginUrl, username, password);
+ 				var loginUrl = "https://paywith.paytm.com/api/core/seller/get-oauth-token/"
+ 				login(loginUrl, username, password, true);
  			}
  		}else{
  			showError('emailId',response.message)
@@ -216,7 +220,7 @@ function logOut() {
  			xmlhttp.onreadystatechange = function(){
  				forgetPwdCallback(xmlhttp);
  			}
- 			var url = "https://dev-paywith.paytm.com/api/oauth-api/forgetPass"; 
+ 			var url = "http://dev-paywith.paytm.com/api/oauth-api/forgetPass"; 
  			xmlhttp.open("POST",url,true);
  			xmlhttp.setRequestHeader("Content-type","application/json");
  			xmlhttp.send(JSON.stringify({"email":username}));
