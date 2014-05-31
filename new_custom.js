@@ -174,7 +174,7 @@ function logOut() {
  	}
  };
 
- function forgetPwdCallback (argument) {
+ function forgetPwdCallback (xmlhttp) {
  	if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
  		var response = JSON.parse(xmlhttp.responseText);
  		if(response.status == 0 && response.message.toLowerCase() == 'success'){
@@ -216,7 +216,7 @@ function logOut() {
  			xmlhttp.onreadystatechange = function(){
  				forgetPwdCallback(xmlhttp);
  			}
- 			var url = "https://paywith.paytm.com/api/oauth-api/forgetPass"; 
+ 			var url = "https://dev-paywith.paytm.com/api/oauth-api/forgetPass"; 
  			xmlhttp.open("POST",url,true);
  			xmlhttp.setRequestHeader("Content-type","application/json");
  			xmlhttp.send(JSON.stringify({"email":username}));

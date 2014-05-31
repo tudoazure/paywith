@@ -206,7 +206,7 @@ _pptm.apps = _pptm.apps || {};
 
         for (i = 0, len = nodes.length; i < len; i++) {
             node = nodes[i];
-injectCSS
+
             if (!node || !node.src) {
                 continue;
             }
@@ -387,8 +387,8 @@ injectCSS
         _pptmInputTag.className = 'pptm-button ' + size;
 
 
-        var height = 500;
-        var width = 900;
+        var height = 650;
+        var width = 1010;
 
 
 
@@ -397,13 +397,12 @@ injectCSS
             if (device_type === 'mobile-browser') {
                 var windowSize = "width=" + window.innerWidth + ",height=" + window.innerHeight + ",scrollbars=no";
 
-                var url = data.items.url.value + 'payment_details.html?pbid=' + data.items.pbid.value + "&return_url=" + document.location.href;
+                var url = data.items.url.value + 'new_payment_details.html?pbid=' + data.items.pbid.value + "&return_url=" + document.location.href;
                 window.open(url, 'popup', windowSize);
 
             } else {
                 TINY.box.show({
-                    iframe: 'file:///home/pradeep/Projects/digitalgoodfrontend/new_payment_details.html?pbid=' + data.items.pbid.value,
-                    // iframe: data.items.url.value + 'payment_details.html?pbid=' + data.items.pbid.value,
+                    iframe: 'file:///home/pradeep/Bangalore/Projects/digitalgoodfrontend/new_payment_details.html?pbid=' + data.items.pbid.value,
                     boxid: 'frameless',
                     width: width,
                     height: height,
