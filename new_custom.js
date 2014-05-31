@@ -1,5 +1,6 @@
 "use strict";
 
+
 function __get_auth_token(param, authresponse) {
 
     var postData = "request_code=" + param.code + "&is_seller=" + param.is_seller + "&device_type=" + param.device_type + "&device_id=" + param.device_id + "&device_token=" + param.device_token + "&device_detail=" + param.device_detail;
