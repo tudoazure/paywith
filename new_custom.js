@@ -300,9 +300,8 @@ var paytm_session_key, ses_user, paytm_user;
  function signUpSignInLinksHtml(){
  	if(!checkLogIn()){
  		var div = document.createElement('div');
- 		div.className = 'signButton';
- 		div.innerHTML = "<div>To continue, you need an account!</div><input type='button' class='btn btn-primary mL10' name='SignIn' value='Sign In' onclick = 'showLogInForm()'/>\
- 		<input type='button' name='SignUP' class='btn btn-primary mL10' value='Sign UP' onclick = 'showSignUpForm()'/>";
+ 		div.className = 'signup-nav';
+        div.innerHTML = '<div>To continue, you need an account!</div><ul class="menu-nav"><li class="active"><a onclick="showLogInForm()"><span>Sign In</span></a></li><li><a onclick="showSignUpForm()"><span>Sign Up<span></a></li></ul>';
  		return div;
  	}
  	return "";
