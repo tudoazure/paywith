@@ -260,7 +260,9 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	div.innerHTML = "<input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
  		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='getPassword()' value='Submit'/>\
- 		<div class='width95 field' align = 'center'><span> We will send a link on your registered email </span></div> ";
+ 		<div class='width95 field' align = 'center'><span> We will send a link on your registered email </span></div>\
+        <div class='width95 field' align = 'center'><a href='#' onclick='showLogInForm()'> Sign In </a></div>";
+
  	changeView(div);
  };
 
@@ -268,13 +270,16 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	var div = document.createElement('div');
  	div.id = "loginForm";
  	div.className ="form-group";
- 	div.innerHTML = "<input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Mobile or Email' />\
+ 	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
+        <label class='field'>Email</label>\
+        <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Mobile or Email' />\
  		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
+        <label class='field'>Password</label>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Paytm Password'/>\
  		<div class='msg mL10'><span id='password-error' class='error'></span></div>\
- 		<div class='width95 field' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forget Password ?</a></div>\
+ 		<div class='width95 mt10' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forget Password ?</a></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='loginFormValidate()' value='Sign In'/>\
- 		<div class='width95 field' align = 'center'><span> Don't have an account ? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
+ 		<div class='width95 mt10' align = 'center'><span> Don't have an account ? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
  	changeView(div);
  };
 
@@ -282,14 +287,15 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	var div = document.createElement('div');
  	div.id = "signForm";
  	div.className ="form-group";
- 	div.innerHTML = "<input type='text' name='username' id='mobileNumber' class='form-control field' placeholder='Enter your Mobile Number' />\
+ 	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
+        <input type='text' name='username' id='mobileNumber' class='form-control field' placeholder='Enter your Mobile Number' />\
  		<div class='msg mL10'><span id='mobileNumber-error' class='error'></span></div>\
  		<input type='text' id='emailId' class='form-control field' placeholder='Enter your Email ID' />\
  		<div class='msg mL10'><span id='emailId-error' class='error'></span></div>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Create your Paytm Password'/>\
  		<div class='msg mL10'><span id='password-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='signUp()' value='Create Account'/>\
- 		<div class='width95 field' align = 'center'><span> Already have an account ? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
+ 		<div class='width95' align = 'center'><span> Already have an account ? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
  	changeView(div);
  };
 
@@ -302,7 +308,10 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	if(!checkLogIn()){
  		var div = document.createElement('div');
  		div.className = 'signup-nav';
-        div.innerHTML = '<strong class="signup-text">To continue, you need an account!</strong><ul class="menu-nav"><li class="active"><a onclick="showLogInForm()"><span>Sign In</span></a></li><li><a onclick="showSignUpForm()"><span>Sign Up<span></a></li></ul>';
+        div.innerHTML = '<div class="signup-text" align="center">\
+        To continue, you need an account!</div>\
+        <ul class="menu-nav"><li class="active"><a onclick="showLogInForm()">Sign In</a></li>\
+        <li><a onclick="showSignUpForm()">Sign Up</a></li></ul>';
  		return div;
  	}
  	return "";
