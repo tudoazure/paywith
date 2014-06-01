@@ -268,7 +268,7 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	var div = document.createElement('div');
  	div.id = "loginForm";
  	div.className ="form-group";
- 	div.innerHTML = "<input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Mobile or Email' />\
+ 	div.innerHTML = "<div align='center' class='ft-14 mt-10'>Pay with Paytm</div><input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Mobile or Email' />\
  		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Paytm Password'/>\
  		<div class='msg mL10'><span id='password-error' class='error'></span></div>\
@@ -282,7 +282,7 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	var div = document.createElement('div');
  	div.id = "signForm";
  	div.className ="form-group";
- 	div.innerHTML = "<input type='text' name='username' id='mobileNumber' class='form-control field' placeholder='Enter your Mobile Number' />\
+ 	div.innerHTML = "<div align='center' class='ft-14 mt-10'>Pay with Paytm</div><input type='text' name='username' id='mobileNumber' class='form-control field' placeholder='Enter your Mobile Number' />\
  		<div class='msg mL10'><span id='mobileNumber-error' class='error'></span></div>\
  		<input type='text' id='emailId' class='form-control field' placeholder='Enter your Email ID' />\
  		<div class='msg mL10'><span id='emailId-error' class='error'></span></div>\

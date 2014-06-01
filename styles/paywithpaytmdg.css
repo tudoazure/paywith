@@ -9,6 +9,8 @@ body{
 	overflow-y: auto;
 }
 
+.ft-14{font-size: 14px;}
+.mt-10{margin-top: 10px;}
 
 .signup-nav{margin:0 0 15px -17px;line-height: 1.65;}
 .signup-nav .signup-text{margin-left: 45px;color:#9aa2b4;}
