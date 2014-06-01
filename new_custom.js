@@ -92,11 +92,12 @@ function logOut() {
  *
  */
  //New Code start
-var paytm_session_key, ses_user, paytm_user;
+paytm_session_key ='', ses_user = '', paytm_user ='';
 
  function changeView(view){
- 	document.getElementById("viewContainer").innerHTML = "";
- 	document.getElementById("viewContainer").appendChild(view);
+ 	document.getElementById("view").innerHTML = "";
+ 	document.getElementById("view").appendChild(view);
+    document.getElementById("custom-forms-editable").style.display = 'none'
  };
 
  function showError(elId, message){
@@ -134,9 +135,9 @@ var paytm_session_key, ses_user, paytm_user;
 	        createCookie("ses_user", response.data.user.username, 10);
 	        createCookie("paytm_user", JSON.stringify(response.data.user), 10);
             //to be removed
-            paytm_session_key = response.data.session.access_token;
-            ses_user = response.data.user.username;
-            paytm_user = JSON.stringify(response.data.user);
+            window.paytm_session_key = response.data.session.access_token;
+            window.ses_user = response.data.user.username;
+            window.paytm_user = JSON.stringify(response.data.user);
             openWalletForm(paytm_user, ses_user,paytm_session_key);
  		}else{
  			showError('username',response.message);
@@ -243,12 +244,12 @@ var paytm_session_key, ses_user, paytm_user;
     div.id = "walletForm";
     div.className ="form-group";
     div.innerHTML = "<div class='span6 header'>\
-        <div class='span3 fl'><span class='fb f16'>"+username+"</span><br/><a class='logout' href='#', onclick='logOut()'>Logout</a></div>\
-        <div><span class='fr span3'>Balance<span></div>\
+        <div class='span3 padd fl'><span class='fb f12'>"+username+"</span><br/><a class='logout' href='#', onclick='logOut()'>Logout</a></div>\
+        <div class='fr padd'><span>Balance<span></div>\
         </div>\
         <div class='width95 field clear' align = 'center'><span>Continue with your payment</span></div>\
         <input type='text' name='amount' id='amount' class='form-control field' placeholder='Enter amount' />\
-        <input type='submit' class='btn btn-primary field form-control' onclick='startTrans()' value='Pay Rs'/>";
+        <input type='submit' class='btn btn-primary field form-control' onclick='_pay_now_submit()' value='Pay Rs'/>";
     changeView(div);
  }
 
@@ -355,6 +356,136 @@ function getProductHtml (productData){
                 maincontainer.innerHTML = "<p>" + productData.message + "</p>";
             }
 };
+
+function _pay_now_submit() {
+    var div = document.getElementById('custom-forms-editable');
+    var $inputs = div.getElementsByTagName('input');
+    console.log($inputs);
+    var user = window.paytm_user;//readCookie('paytm_user') // todo need to change
+    if(user){
+        user = JSON.parse(user);
+    }
+    var email = user.email;
+    var values = {};
+    var c_name = {};
+    var c_desc = {};
+    var cp = {};
+    for(var i= 0 ; i< $inputs.length ; i++){
+       if ($inputs[i].name != "d_email" && $inputs[i].name != "title" && 
+           $inputs[i].name != "description" && $inputs[i].name != "price" && 
+           $inputs[i].name != "currency" && $inputs[i].name != "") 
+       {
+            values[$inputs[i].name] = $inputs[i].value;
+            cp[$inputs[i].rel] = $inputs[i].value;
+        } 
+    }
+    // $inputs.each(function () {
+    //     if (this.name != "d_email" && this.name != "title" && this.name != "description" && this.name != "price" && this.name != "currency" && this.name != "") {
+            
+    //         values[this.name] = $(this).val();
+    //         cp[$(this).attr("rel")] = $(this).val();
+    //     }
+    // });
+    var c_params = JSON.stringify(cp);
+    document.getElementById("view").innerHTML = "";
+    document.getElementById("view").innerHTML = "<div class='text-center'>\
+        <img src='"+appConfig.APP_HOST+"assets/images/spinner-md.gif'>\
+    </div>";
+    
+    var session_token = readCookie("paytm_session_key");
+    var device_type = 'desktop-browser';
+    // if(device.mobile()){
+    //     device_type = 'mobile-browser';
+    // }
+    var formData = new FormData();
+    formData.append("id", pbid);
+    formData.append("d_email", email);
+    formData.append("custom_params", c_params);
+    formData.append("device_type", device_type);
+
+    eraseCookie("transaction_id");
+     __start_transaction(formData);
+    
+};
+
+function __start_transaction(data){
+    $.ajax({
+        url: appConfig.API_HOST + appConstants.START_TRANSACTION,
+        type: "POST",
+        data: data,
+        processData: false, // tell jQuery not to process the data
+        contentType: false,
+        success: function (responseData) {
+            console.log("start transaction response  data " + responseData);
+            var txnResponse = $.parseJSON(responseData);
+            if (txnResponse.status == 0) {
+                console.log("transaction successful" + txnResponse.data.transaction_id);
+                createCookie("dg_transaction_id", txnResponse.data.transaction_id);
+                __finish_transaction(txnResponse.data.transaction_id);
+                
+            } else {
+                if(txnResponse.status === 121){
+                    document.getElementById("view").innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
+                } else {
+                    console.log("reansaction unsuccessful");
+                    document.getElementById("view").innerHTML ="<p>"+txnResponse.message+ "</p>";
+                }
+            }
+        }
+    });
+};
+
+function __finish_transaction(transaction_id){
+    var session_cookie = window.paytm_session_key;//readCookie("paytm_session_key");//todo need to change
+    if (session_cookie == null) {
+        showLogInForm();
+    } else {
+                var device_type = 'desktop-browser'; 
+                // if(device.mobile()){ device_type = 'mobile-browser'; } //todo need to change
+                var formData = new FormData();
+                //var transaction_id = readCookie("dg_transaction_id");//to do need to check
+                formData.append("transaction_id", transaction_id);
+                formData.append("session_token", session_cookie);
+                formData.append("device_type", device_type);
+                
+         $.ajax({
+        url: appConfig.API_HOST + appConstants.FINISH_TRANSACTION,
+        type: "POST",
+        data: formData,
+        processData: false, // tell jQuery not to process the data
+        contentType: false,
+        success: function (responseData) {
+            console.log("finish transaction  response data " + responseData);
+            var txnResponse = $.parseJSON(responseData);
+            if (txnResponse.status == 0) {
+                console.log("transaction successful");
+                // if(device.mobile()){ //todo
+                //     $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p><p><a href=\"#\" onclick=\"javascript:window.open('','_self').close();\">Close</a></p></div>");        
+                // } else {
+                    document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
+                // }
+                
+            } else if(txnResponse.status == 1001){
+                console.log("insufficient balance");  
+                var form_data = txnResponse.data.html_form;
+                document.getElementById('view').innerHTML = '';
+                document.getElementById('view').appendChild(form_data);
+                // $("#view").html(form_data);
+            } else {
+                console.log("transaction failed");
+                if(txnResponse.message){
+                   document.getElementById("view").innerHTML = "<p>"+txnResponse.message+ "</p>"; 
+               }else{
+                    document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
+               }
+                
+                
+             
+            }
+        }
+    });
+    }
+}
 //New Code End
 
 function __get_pay_prod_details(__pbid__) {

@@ -138,7 +138,9 @@ background-color: #2d6ca2;
 background-position: 0 -15px;
 }
 
-.span3 {width: 50%; padding: 15px 10px 5px 50px; border-right: solid 1px grey; margin-top: 13px;}
+.span6 {width: 100%;}
+.span3 {width: 50%;}
+.padd {padding: 11px 5px 5px 10px; border-right: solid 1px grey; margin-top: 13px;}
 .fl{float: left;}
 .fr{float: right;}
 .clear{clear: both;}
@@ -152,7 +154,7 @@ input.form-control,.width95{width: 95%;}
 .msg>.error{color: #b94a48;font-size: 12px;display: none;}
 .header{background-color: #E6E0E0; height: 85px;}
 .fb{font-weight: bold;}
-.f16{font-size: 16px;}
+.f12{font-size: 12px;}
 .logout{ font-size: 12px; font-weight: normal;}
 
 
