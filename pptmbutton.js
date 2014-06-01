@@ -182,7 +182,7 @@ _pptm.apps = _pptm.apps || {};
         css += '.tclose {position: absolute;top: 0px;right: 0px;width: 30px;height: 30px;cursor: pointer;background: url(assets/images/close.png) no-repeat}';
         css += '.tclose:hover {background-position: 0 -30px}';
         css += '#blackmask {background: #333}';
-        css += '#frameless {padding: 10px}';
+        css += '#frameless {padding: 0px}';
         css += '#frameless .tclose {left: 6px}';
 
         styleEl.type = 'text/css';
@@ -387,8 +387,8 @@ _pptm.apps = _pptm.apps || {};
         _pptmInputTag.className = 'pptm-button ' + size;
 
 
-        var height = 650;
-        var width = 1010;
+        var height = 400;
+        var width = 300;
 
 
 

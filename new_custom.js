@@ -301,7 +301,7 @@ var paytm_session_key, ses_user, paytm_user;
  	if(!checkLogIn()){
  		var div = document.createElement('div');
  		div.className = 'signup-nav';
-        div.innerHTML = '<div>To continue, you need an account!</div><ul class="menu-nav"><li class="active"><a onclick="showLogInForm()"><span>Sign In</span></a></li><li><a onclick="showSignUpForm()"><span>Sign Up<span></a></li></ul>';
+        div.innerHTML = '<div class="signup-text">To continue, you need an account!</div><ul class="menu-nav"><li class="active"><a onclick="showLogInForm()"><span>Sign In</span></a></li><li><a onclick="showSignUpForm()"><span>Sign Up<span></a></li></ul>';
  		return div;
  	}
  	return "";
