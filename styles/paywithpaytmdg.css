@@ -23,6 +23,8 @@ body{
 .menu-nav li:hover a, .menu-nav li.active a {color:#FFF;}
 .menu-nav li:hover, .menu-nav li.active {background:#00a8ff;}
 
+.product-container{opacity: 0.8;background-color: #9AA2A6;}
+
 .product-img-container {
 	width:100%;
 	height:35%;
@@ -158,5 +160,6 @@ input.form-control,.width95{width: 95%;}
 .fb{font-weight: bold;}
 .f12{font-size: 12px;}
 .logout{ font-size: 12px; font-weight: normal;}
+
 
 
