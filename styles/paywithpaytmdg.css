@@ -11,14 +11,14 @@ body{
 
 
 .signup-nav{margin:0 0 15px 0px;line-height: 1.65;}
-.signup-nav .signup-text{color: #9aa2b4; font-size: 13px;}
+.signup-nav .signup-text{color: #666; font-size: 13px;}
 .tb-bb{bordertop:1px solid #cbcbcb; border-bottom:1px solid #cbcbcb;}
 .menu-nav li {cursor:pointer; list-style:none;float:left;position:relative;border-top:1px solid #d7d7d7;border-bottom:1px solid #d7d7d7;width:45%;background:#fff; height: 35px;}
 .menu-nav>li {border-left:1px solid #d7d7d7;}
 .menu-nav li:first-child {border-radius:4px 0px 0px 4px;border-left:1px solid #d7d7d7;}
 .menu-nav li:last-child {border-radius:0px 4px 4px 0px;border-right:1px solid #d7d7d7;}
 .menu-nav li a {display:block;}
-.menu-nav a {text-decoration:none !important;color:#9aa2b4;margin-left:30%;font-size:13px;height:24px;font-weight:700; padding-top: 6px;}
+.menu-nav a {text-decoration:none !important;color:#666;margin-left:30%;font-size:13px;height:24px;font-weight:700; padding-top: 6px;}
 .menu-nav li:hover a, .menu-nav li.active a {color:#FFF;}
 .menu-nav li:hover, .menu-nav li.active {background:#00a8ff;}
 
@@ -159,7 +159,8 @@ background-position: 0 -15px;
 .fr{float: right;}
 .clear{clear: both;}
 .field {margin:2px 0px 14px 52px;}
-.label {margin-left: 54px;}
+.gry-6{color: #666;}
+.label {margin-left: 54px;color:#555;}
 .pt5{padding-top: 5px}
 .m20{margin: 20px;}
 .mL10 {margin-left: 10px;}

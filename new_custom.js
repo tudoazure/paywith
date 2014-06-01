@@ -267,7 +267,7 @@ function showFirstPage(){
         <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
  		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='getPassword()' value='Submit'/>\
- 		<div class='width95 mt10' align = 'center'><span> We will send a link on your registered email </span></div>\
+ 		<div class='width95 mt10' align = 'center'><span class='gry-6'> We will send a link on your registered email </span></div>\
         <div class='width95 mt10' align = 'center'><a href='#' onclick='showLogInForm()'> Sign In </a></div>";
 
  	changeView(div);
@@ -286,7 +286,7 @@ function showFirstPage(){
  		<div class='msg label'><span id='password-error' class='error'></span></div>\
  		<div class='width95 mt10 mb10' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forget Password?</a></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='loginFormValidate()' value='Sign In'/>\
- 		<div class='width95' align = 'center'><span> Don't have an account? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
+ 		<div class='width95' align = 'center'><span class='gry-6'> Don't have an account? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
  	changeView(div);
  };
 
@@ -305,7 +305,7 @@ function showFirstPage(){
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Create your Paytm Password'/>\
  		<div class='msg label'><span id='password-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='signUp()' value='Create Account'/>\
- 		<div class='width95' align = 'center'><span> Already have an account? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
+ 		<div class='width95' align = 'center'><span class='gry-6'> Already have an account? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
  	changeView(div);
  };
 
