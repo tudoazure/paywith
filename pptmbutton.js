@@ -387,8 +387,8 @@ _pptm.apps = _pptm.apps || {};
         _pptmInputTag.className = 'pptm-button ' + size;
 
 
-        var height = 400;
-        var width = 300;
+        var height = 500;
+        var width = 400;
 
 
 
@@ -402,7 +402,7 @@ _pptm.apps = _pptm.apps || {};
 
             } else {
                 TINY.box.show({
-                    iframe: 'file:///home/pradeep/Projects/paywith/new_payment_details.html?pbid=' + data.items.pbid.value,
+                    iframe: 'file:///home/pradeep/Bangalore/Projects/paywith/new_payment_details.html?pbid=' + data.items.pbid.value,
                     boxid: 'frameless',
                     width: width,
                     height: height,

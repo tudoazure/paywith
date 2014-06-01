@@ -471,8 +471,8 @@ function __finish_transaction(transaction_id){
                 var ifrm = document.createElement("IFRAME");
                 ifrm.name = 'myiframe';
                 ifrm.id = 'myiframe';
-                ifrm.style.width = 640+"px";
-                ifrm.style.height = 480+"px";
+                ifrm.style.width = 100 +"%";
+                ifrm.style.height = 100 +"%";
                 
                 document.getElementById('view').innerHTML = form_data;
                 document.getElementById('view').appendChild(ifrm);
