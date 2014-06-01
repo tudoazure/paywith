@@ -15,8 +15,8 @@ body{
 .tb-bb{bordertop:1px solid #cbcbcb; border-bottom:1px solid #cbcbcb;}
 .menu-nav li {cursor:pointer; list-style:none;float:left;position:relative;border-top:1px solid #d7d7d7;border-bottom:1px solid #d7d7d7;padding:3px 20px;width:30%;background:#fff;}
 .menu-nav>li {border-left:1px solid #d7d7d7;}
-.menu-nav li:first-child {border-radius:3px 0px 0px 3px;border-left:1px solid #d7d7d7;}
-.menu-nav li:last-child {border-radius:0px 3px 3px 0px;border-right:1px solid #d7d7d7;}
+.menu-nav li:first-child {border-radius:4px 0px 0px 4px;border-left:1px solid #d7d7d7;}
+.menu-nav li:last-child {border-radius:0px 4px 4px 0px;border-right:1px solid #d7d7d7;}
 .menu-nav a {display:block;text-decoration:none;color:#9aa2b4;margin-left:16px;font-size:13px;height:24px;font-weight:700;}
 .menu-nav li:hover a, .menu-nav li.active a {color:#FFF;}
 .menu-nav li:hover, .menu-nav li.active {background:#00a8ff;}
