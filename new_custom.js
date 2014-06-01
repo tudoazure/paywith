@@ -1,43 +1,8 @@
 "use strict";
 
-
-function __get_auth_token(param, authresponse) {
-
-    var postData = "request_code=" + param.code + "&is_seller=" + param.is_seller + "&device_type=" + param.device_type + "&device_id=" + param.device_id + "&device_token=" + param.device_token + "&device_detail=" + param.device_detail;
-
-
-    ajaxPostRequest(postData, appConstants.GET_OAUTH_TOKEN, function (data) {
-        authresponse(data);
-
-    })
-}
-
-function __update_user_details(formData) {
-    console.log("update user details");
-    ajaxPostRequest(formData, appConstants.UPDATE_SELLER, function (data) {
-        console.log(data);
-    })
-}
-
 /*
  *utility methods
  */
-
-function ajaxPostRequest(formData, url, response) {
-    $.ajax({
-        url: appConfig.API_HOST + url,
-        type: "POST",
-        data: formData,
-        processData: false, // tell jQuery not to process the data
-        contentType: "application/x-www-form-urlencoded",
-
-        success: function (responseData) {
-            var oAuthData = $.parseJSON(responseData);
-            response(oAuthData);
-        }
-    });
-
-}
 
 function createCookie(name, value, days) {
     
@@ -75,8 +40,6 @@ function __get_parameter_by_name(name) {
 }
 
 
-
-
 function logOut() {
     eraseCookie("session_token");
     eraseCookie("dg_transaction_id");
@@ -84,8 +47,6 @@ function logOut() {
     eraseCookie("device_type");
     showFirstPage();
 }
-
-
 
 
 /*
@@ -97,7 +58,6 @@ function logOut() {
 
 function showFirstPage(){
     document.getElementById("view").innerHTML = "";
-    // document.getElementById("view").appendChild(view);
     document.getElementById("custom-forms-editable").style.display = 'inline'
 };
 
@@ -196,7 +156,6 @@ function showFirstPage(){
 		};
 		xmlhttp.open("POST",url,true);
 		xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        // request_code=d7eccda1-df9a-43f6-b2bc-f0b5e4654d9b&is_seller=false&device_type=android&device_id=14&device_token=4fd598de-51c7-476a-9577-ba614e354d6f&device_detail=[android-4.4]
         if(isSignup){
            xmlhttp.send("device_token=web-token&is_seller=true&device_type=web&device_detail=["+navigator.userAgent+"]&request_code="+password+"&device_id=dev-id"); 
        }else{
@@ -370,7 +329,6 @@ function showFirstPage(){
 
 function getProductHtml (productData){
 	var maincontainer = document.getElementById("sell-digital");
-	console.log(productData);
             if (productData.status == 0) {
                 if (productData.data.status == 'ACTIVE') {
                     var c_params = productData.data.custom_params;
@@ -382,14 +340,10 @@ function getProductHtml (productData){
                             <div class='product-price'><span class='WebRupee'>&#x20B9;</span> <span id='product-price'>" +  productData.data.amount + "</span></div>\
                         </div>";
                      var productDiv = document.getElementById('prod_pay_details');
-                     // productDiv.className = 'mB20';
                      productDiv.innerHTML = productHtml;
-                    
-
                     $.each(c_params, function (key, value) {
                         if (key != "" && key != null) {
                             intId = intId + 1;
-                            //var p = document.createElement("p");
                             var input = document.createElement("input");
                             input.type = "text";
                             input.className = "form-control";
@@ -397,9 +351,6 @@ function getProductHtml (productData){
                             input.id = "custom_name_" + intId;
                             input.placeholder = key;
                             input.rel = key;
-                           // p.appendChild(input);
-                            // var customFieldsHtml = "<p><input type='text' class='form-control' name='custom_name_" + intId + "' id='custom_name_" + intId + "' placeholder='" + key + "' rel='" + key + "'></p>";
-
                             document.getElementById("custom-forms-editable").appendChild(input);
                         }
                     });
