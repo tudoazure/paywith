@@ -301,7 +301,7 @@ var paytm_session_key, ses_user, paytm_user;
  	if(!checkLogIn()){
  		var div = document.createElement('div');
  		div.className = 'signup-nav';
-        div.innerHTML = '<div class="signup-text">To continue, you need an account!</div><ul class="menu-nav"><li class="active"><a onclick="showLogInForm()"><span>Sign In</span></a></li><li><a onclick="showSignUpForm()"><span>Sign Up<span></a></li></ul>';
+        div.innerHTML = '<strong class="signup-text">To continue, you need an account!</strong><ul class="menu-nav"><li class="active"><a onclick="showLogInForm()"><span>Sign In</span></a></li><li><a onclick="showSignUpForm()"><span>Sign Up<span></a></li></ul>';
  		return div;
  	}
  	return "";
@@ -317,7 +317,7 @@ function getProductHtml (productData){
                     var productHtml = "<div class='product-img-container' style='background-image: url("+media.preview_image+")'>\
                             <h3 class='product-title'>"+ productData.data.title + "</h3>\
                             <span class='product-desc'>" + productData.data.description + "</span>\
-                            <span class='product-price'>" +  productData.data.amount + " INR</span>\
+                            <span class='product-price'> Rs " +  productData.data.amount + "</span>\
                         </div>";
                      var productDiv = document.getElementById('prod_pay_details');
                      // productDiv.className = 'mB20';
@@ -327,7 +327,7 @@ function getProductHtml (productData){
                     $.each(c_params, function (key, value) {
                         if (key != "" && key != null) {
                             intId = intId + 1;
-                            var p = document.createElement("p");
+                            //var p = document.createElement("p");
                             var input = document.createElement("input");
                             input.type = "text";
                             input.className = "form-control";
@@ -335,10 +335,10 @@ function getProductHtml (productData){
                             input.id = "custom_name_" + intId;
                             input.placeholder = key;
                             input.rel = key;
-                            p.appendChild(input);
+                           // p.appendChild(input);
                             // var customFieldsHtml = "<p><input type='text' class='form-control' name='custom_name_" + intId + "' id='custom_name_" + intId + "' placeholder='" + key + "' rel='" + key + "'></p>";
 
-                            document.getElementById("custom-forms-editable").appendChild(p);
+                            document.getElementById("custom-forms-editable").appendChild(input);
                         }
                     });
 					//code for showing SignUP and SignIn Button
