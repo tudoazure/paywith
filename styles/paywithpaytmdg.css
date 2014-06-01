@@ -118,7 +118,7 @@ input, button, select, textarea {
 
 .btn-primary {
 	color: #fff;
-	background-color: #428bca;
+	background-color: #00a8ff;
 	border-color: #357ebd;
 }
 
@@ -129,12 +129,12 @@ input, button, select, textarea {
 }
 
 .btn-primary:active, .btn-primary.active {
-	background-color: #2d6ca2;
+	background-color: #00a8ff;
 	border-color: #2b669a;
 }
 
 .btn-primary:hover, .btn-primary:focus {
-background-color: #2d6ca2;
+background-color: #00a8ff;
 background-position: 0 -15px;
 }
 
