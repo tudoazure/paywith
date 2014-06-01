@@ -9,17 +9,15 @@ body{
 	overflow-y: auto;
 }
 
-.ft-14{font-size: 14px;}
-.mt-10{margin-top: 10px;}
 
-.signup-nav{margin:0 0 15px -17px;line-height: 1.65;}
-.signup-nav .signup-text{margin-left: 45px;color:#9aa2b4;}
+.signup-nav{margin:0 0 15px 0px;line-height: 1.65;}
+.signup-nav .signup-text{color: #626366; font-size: 13px;}
 .tb-bb{bordertop:1px solid #cbcbcb; border-bottom:1px solid #cbcbcb;}
-.menu-nav li {cursor:pointer; list-style:none;float:left;position:relative;border-top:1px solid #d7d7d7;border-bottom:1px solid #d7d7d7;padding:3px 20px;width:30%;background:#fff;}
+.menu-nav li {cursor:pointer; list-style:none;float:left;position:relative;border-top:1px solid #d7d7d7;border-bottom:1px solid #d7d7d7;padding:3px 20px;width:30%;background:#fff; height: 35px;}
 .menu-nav>li {border-left:1px solid #d7d7d7;}
 .menu-nav li:first-child {border-radius:4px 0px 0px 4px;border-left:1px solid #d7d7d7;}
 .menu-nav li:last-child {border-radius:0px 4px 4px 0px;border-right:1px solid #d7d7d7;}
-.menu-nav a {display:block;text-decoration:none;color:#9aa2b4;margin-left:26%;font-size:13px;height:24px;font-weight:700;}
+.menu-nav a {display:block;text-decoration:none !important;color:#9aa2b4;margin-left:26%;font-size:13px;height:24px;font-weight:700; padding-top: 6px;}
 .menu-nav li:hover a, .menu-nav li.active a {color:#FFF;}
 .menu-nav li:hover, .menu-nav li.active {background:#00a8ff;}
 
@@ -148,18 +146,24 @@ background-position: 0 -15px;
 .fl{float: left;}
 .fr{float: right;}
 .clear{clear: both;}
-.field {margin: 15px 10px 0px 10px;}
+.field {margin:15px 0px 0px 52px;}
+.label {margin:15px 0px 0px 52px;}
 .pt5{padding-top: 5px}
 .m20{margin: 20px;}
 .mL10 {margin-left: 10px;}
+.mt10{margin-top: 10px;}
 .mB20 {margin-bottom: 20px;}
-input.form-control,.width95{width: 95%;}
+.heading{font-size: 14px; margin-top: 10px; margin-bottom: 12px;}
+input.form-control{width: 70%}
+.width95{width: 95%;}
 .msg {margin-top: 0px;min-height: 0px;}
 .msg>.error{color: #b94a48;font-size: 12px;display: none;}
 .header{background-color: #E6E0E0; height: 85px;}
 .fb{font-weight: bold;}
 .f12{font-size: 12px;}
 .logout{ font-size: 12px; font-weight: normal;}
+a {color: #00a8ff;font-size: 13px;text-decoration: none;}
+a:hover {text-decoration: underline;}
 
 
 
