@@ -92,6 +92,8 @@ function logOut() {
  *
  */
  //New Code start
+var paytm_session_key, ses_user, paytm_user;
+
  function changeView(view){
  	document.getElementById("viewContainer").innerHTML = "";
  	document.getElementById("viewContainer").appendChild(view);
@@ -131,7 +133,11 @@ function logOut() {
 	 		createCookie("paytm_session_key", response.data.session.access_token, 10); 
 	        createCookie("ses_user", response.data.user.username, 10);
 	        createCookie("paytm_user", JSON.stringify(response.data.user), 10);
- 			alert('success');
+            //to be removed
+            paytm_session_key = response.data.session.access_token;
+            ses_user = response.data.user.username;
+            paytm_user = JSON.stringify(response.data.user);
+            openWalletForm(paytm_user, ses_user,paytm_session_key);
  		}else{
  			showError('username',response.message);
  		}
@@ -230,13 +236,29 @@ function logOut() {
  	}
  };
 
+ function openWalletForm(paytm_user){
+    var paytm_user =  JSON.parse(paytm_user);
+    var username =  paytm_user.first_name ? paytm_user.first_name + paytm_user.last_name : paytm_user.email;
+    var div = document.createElement('div');
+    div.id = "walletForm";
+    div.className ="form-group";
+    div.innerHTML = "<div class='span6 header'>\
+        <div class='span3 fl'><span class='fb f16'>"+username+"</span><br/><a class='logout' href='#', onclick='logOut()'>Logout</a></div>\
+        <div><span class='fr span3'>Balance<span></div>\
+        </div>\
+        <div class='width95 field clear' align = 'center'><span>Continue with your payment</span></div>\
+        <input type='text' name='amount' id='amount' class='form-control field' placeholder='Enter amount' />\
+        <input type='submit' class='btn btn-primary field form-control' onclick='startTrans()' value='Pay Rs'/>";
+    changeView(div);
+ }
+
  function showforgetPwdForm(){
  	var div = document.createElement('div');
  	div.id = "forgetPwdForm";
  	div.className ="form-group";
  	div.innerHTML = "<input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
  		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
- 		<input type='submit' class='btn btn-primary field form-control' onclick='getPassword()' value='Get Password'/>\
+ 		<input type='submit' class='btn btn-primary field form-control' onclick='getPassword()' value='Submit'/>\
  		<div class='width95 field' align = 'center'><span> We will send a link on your registered email </span></div> ";
  	changeView(div);
  };
@@ -250,8 +272,8 @@ function logOut() {
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Paytm Password'/>\
  		<div class='msg mL10'><span id='password-error' class='error'></span></div>\
  		<div class='width95 field' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forget Password ?</a></div>\
- 		<input type='submit' class='btn btn-primary field form-control' onclick='loginFormValidate()' value='Secure Sign In'/>\
- 		<div class='width95 field' align = 'center'><span> Don't have an account? <a href='#' onclick='showSignUpForm()'> Singn Up</a></span></div> ";
+ 		<input type='submit' class='btn btn-primary field form-control' onclick='loginFormValidate()' value='Sign In'/>\
+ 		<div class='width95 field' align = 'center'><span> Don't have an account ? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
  	changeView(div);
  };
 
@@ -266,7 +288,7 @@ function logOut() {
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Create your Paytm Password'/>\
  		<div class='msg mL10'><span id='password-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='signUp()' value='Create Account'/>\
- 		<div class='width95 field' align = 'center'><span> Already have an account? <a href='#' onclick='showLogInForm()'> Singn In</a></span></div> ";
+ 		<div class='width95 field' align = 'center'><span> Already have an account ? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
  	changeView(div);
  };
 
@@ -279,7 +301,7 @@ function logOut() {
  	if(!checkLogIn()){
  		var div = document.createElement('div');
  		div.className = 'signButton';
- 		div.innerHTML = "<input type='button' class='btn btn-primary mL10' name='SignIn' value='Sign In' onclick = 'showLogInForm()'/>\
+ 		div.innerHTML = "<div>To continue, you need an account!</div><input type='button' class='btn btn-primary mL10' name='SignIn' value='Sign In' onclick = 'showLogInForm()'/>\
  		<input type='button' name='SignUP' class='btn btn-primary mL10' value='Sign UP' onclick = 'showSignUpForm()'/>";
  		return div;
  	}
@@ -299,7 +321,7 @@ function getProductHtml (productData){
                             <span class='product-price'>" +  productData.data.amount + " INR</span>\
                         </div>";
                      var productDiv = document.getElementById('prod_pay_details');
-                     productDiv.className = 'mB20';
+                     // productDiv.className = 'mB20';
                      productDiv.innerHTML = productHtml;
                     
 

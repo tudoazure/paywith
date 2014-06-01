@@ -51,11 +51,21 @@ body{
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 }
+.span3 {width: 50%; padding: 15px 10px 5px 50px; border-right: solid 1px grey; margin-top: 13px;}
+.fl{float: left;}
+.fr{float: right;}
+.clear{clear: both;}
 .field {margin: 15px 10px 0px 10px;}
+.pt5{padding-top: 5px}
 .m20{margin: 20px;}
 .mL10 {margin-left: 10px;}
 .mB20 {margin-bottom: 20px;}
 input.form-control,.width95{width: 95%;}
 .msg {margin-top: 0px;min-height: 0px;}
 .msg>.error{color: #b94a48;font-size: 12px;display: none;}
+.header{background-color: #E6E0E0; height: 85px;}
+.fb{font-weight: bold;}
+.f16{font-size: 16px;}
+.logout{ font-size: 12px; font-weight: normal;}
+
 
