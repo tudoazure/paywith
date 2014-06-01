@@ -468,9 +468,23 @@ function __finish_transaction(transaction_id){
             } else if(txnResponse.status == 1001){
                 console.log("insufficient balance");  
                 var form_data = txnResponse.data.html_form;
-                document.getElementById('view').innerHTML = '';
-                document.getElementById('view').appendChild(form_data);
-                // $("#view").html(form_data);
+                var ifrm = document.createElement("IFRAME");
+                ifrm.name = 'myiframe';
+                ifrm.id = 'myiframe';
+                ifrm.style.width = 640+"px";
+                ifrm.style.height = 480+"px";
+                
+                document.getElementById('view').innerHTML = form_data;
+                document.getElementById('view').appendChild(ifrm);
+                var form = document.getElementsByTagName('form');
+                form[0].target = ifrm.name;
+                var script = document.getElementById('view').getElementsByTagName('script');
+                if(script){
+                    eval(script[0].text);
+                }
+
+                // document.getElementById('view').appendChild(form_data);  
+                 // $("#view").html(form_data);
             } else {
                 console.log("transaction failed");
                 if(txnResponse.message){
