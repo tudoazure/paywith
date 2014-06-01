@@ -82,6 +82,7 @@ function logOut() {
     eraseCookie("dg_transaction_id");
     eraseCookie("b_transaction_id");
     eraseCookie("device_type");
+    showFirstPage();
 }
 
 
@@ -92,7 +93,13 @@ function logOut() {
  *
  */
  //New Code start
-paytm_session_key ='', ses_user = '', paytm_user ='';
+// paytm_session_key ='', ses_user = '', paytm_user ='';
+
+function showFirstPage(){
+    document.getElementById("view").innerHTML = "";
+    // document.getElementById("view").appendChild(view);
+    document.getElementById("custom-forms-editable").style.display = 'inline'
+};
 
  function changeView(view){
  	document.getElementById("view").innerHTML = "";
@@ -101,28 +108,57 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  };
 
  function showError(elId, message){
- 	document.getElementById(elId).classList.add = 'error';
+ 	document.getElementById(elId).classList.add('error');
 	var errorDiv = document.getElementById(elId+'-error');
 	errorDiv.style.display = 'inline';
 	errorDiv.innerHTML = message;
  };
 
  function hideError(elId, message){
- 	document.getElementById(elId).classList.remove = 'error';
+ 	document.getElementById(elId).classList.remove('error');
 	var errorDiv = document.getElementById(elId+'-error');
 	errorDiv.style.display = 'none';
 	errorDiv.innerHTML = "";
  };
 
+ function hideAllError(form){
+    if(form){
+        var spans = form.getElementsByTagName('span');
+        var inputs = form.getElementsByTagName('input');
+        if(spans.length){
+            for(var i=0; i<spans.length; i++){
+                if(spans[i].classList.contains('error')){
+                    spans[i].style.display = 'none';
+                }
+            }
+        }
+        if(inputs.length){
+            for(var i=0; i<inputs.length; i++){
+                if(inputs[i].classList.contains('error')    ){
+                    inputs[i].classList.remove('error');
+                }
+            }
+        }
+    }
+ }
+
  function loginFormValidate(){
  	var xmlhttp;
  	var loginForm = document.getElementById('loginForm');
+    hideAllError(loginForm);
  	if(loginForm){
  		var username = document.getElementById('username').value;
  		var password = document.getElementById('password').value;
  		if(username && password){
  			login('',username, password);
- 		}
+ 		}else{
+            if(!username){
+                showError('username', "Please enter your email.");
+            }
+            if(!password){
+                showError('password', "Please enter your password.");
+            }
+        }
  	}
 
  };
@@ -199,6 +235,7 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  function signUp(){
  	var xmlhttp;
  	var signupForm = document.getElementById('signForm');
+    hideAllError(signupForm);
  	if(signupForm){
  		var mobileNumber = document.getElementById('mobileNumber').value;
  		var emailId = document.getElementById('emailId').value;
@@ -212,7 +249,17 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  			xmlhttp.open("POST",url,true);
  			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
  			xmlhttp.send("mobileNumber="+mobileNumber+"&password="+password+"&email="+emailId);
- 		}
+ 		}else{
+            if(!mobileNumber){
+                showError('mobileNumber','Please enter your mbile number');
+            }
+            if(!emailId){
+                showError('emailId','Please enter your email');
+            }
+            if(!password){
+                showError('password','Please enter your password');
+            }
+        }
  	}
 
  };
@@ -238,6 +285,7 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  };
 
  function openWalletForm(paytm_user){
+    var price = document.getElementById('product-price').innerHTML.trim();
     var paytm_user =  JSON.parse(paytm_user);
     var username =  paytm_user.first_name ? paytm_user.first_name + paytm_user.last_name : paytm_user.email;
     var div = document.createElement('div');
@@ -245,11 +293,10 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
     div.className ="form-group";
     div.innerHTML = "<div class='span6 header'>\
         <div class='span3 padd fl'><span class='fb f12'>"+username+"</span><br/><a class='logout' href='#', onclick='logOut()'>Logout</a></div>\
-        <div class='fr padd'><span>Balance<span></div>\
+        <div class='fr padd1'><span>Balance<span></div>\
         </div>\
-        <div class='width95 field clear' align = 'center'><span>Continue with your payment</span></div>\
-        <input type='text' name='amount' id='amount' class='form-control field' placeholder='Enter amount' />\
-        <input type='submit' class='btn btn-primary field form-control' onclick='_pay_now_submit()' value='Pay Rs'/>";
+        <div class='width95 mt10 clear' align = 'center'><span>Continue with your payment</span></div>\
+        <input type='submit' class='btn btn-primary field form-control' onclick='_pay_now_submit()' value='Pay "+price+"'/>";
     changeView(div);
  }
 
@@ -257,11 +304,12 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	var div = document.createElement('div');
  	div.id = "forgetPwdForm";
  	div.className ="form-group";
- 	div.innerHTML = "<input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
+ 	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
+        <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
  		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='getPassword()' value='Submit'/>\
- 		<div class='width95 field' align = 'center'><span> We will send a link on your registered email </span></div>\
-        <div class='width95 field' align = 'center'><a href='#' onclick='showLogInForm()'> Sign In </a></div>";
+ 		<div class='width95 mt10' align = 'center'><span> We will send a link on your registered email </span></div>\
+        <div class='width95 mt10' align = 'center'><a href='#' onclick='showLogInForm()'> Sign In </a></div>";
 
  	changeView(div);
  };
@@ -271,15 +319,15 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	div.id = "loginForm";
  	div.className ="form-group";
  	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
-        <label class='field'>Email</label>\
-        <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Mobile or Email' />\
- 		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
-        <label class='field'>Password</label>\
+        <label class='label'>Email</label>\
+        <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
+ 		<div class='msg label'><span id='username-error' class='error'></span></div>\
+        <label class='label'>Password</label>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Paytm Password'/>\
- 		<div class='msg mL10'><span id='password-error' class='error'></span></div>\
- 		<div class='width95 mt10' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forget Password ?</a></div>\
+ 		<div class='msg label'><span id='password-error' class='error'></span></div>\
+ 		<div class='width95 mt10 mb10' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forget Password?</a></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='loginFormValidate()' value='Sign In'/>\
- 		<div class='width95 mt10' align = 'center'><span> Don't have an account ? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
+ 		<div class='width95' align = 'center'><span> Don't have an account? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
  	changeView(div);
  };
 
@@ -288,14 +336,17 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  	div.id = "signForm";
  	div.className ="form-group";
  	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
+        <label class='label'>Mobile Number</label>\
         <input type='text' name='username' id='mobileNumber' class='form-control field' placeholder='Enter your Mobile Number' />\
- 		<div class='msg mL10'><span id='mobileNumber-error' class='error'></span></div>\
+ 		<div class='msg label'><span id='mobileNumber-error' class='error'></span></div>\
+        <label class='label'>Email</label>\
  		<input type='text' id='emailId' class='form-control field' placeholder='Enter your Email ID' />\
- 		<div class='msg mL10'><span id='emailId-error' class='error'></span></div>\
+ 		<div class='msg label'><span id='emailId-error' class='error'></span></div>\
+        <label class='label'>Password</label>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Create your Paytm Password'/>\
- 		<div class='msg mL10'><span id='password-error' class='error'></span></div>\
+ 		<div class='msg label'><span id='password-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='signUp()' value='Create Account'/>\
- 		<div class='width95' align = 'center'><span> Already have an account ? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
+ 		<div class='width95' align = 'center'><span> Already have an account? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
  	changeView(div);
  };
 
@@ -310,8 +361,8 @@ paytm_session_key ='', ses_user = '', paytm_user ='';
  		div.className = 'signup-nav';
         div.innerHTML = '<div class="signup-text" align="center">\
         To continue, you need an account!</div>\
-        <ul class="menu-nav"><li class="active"><a onclick="showLogInForm()">Sign In</a></li>\
-        <li><a onclick="showSignUpForm()">Sign Up</a></li></ul>';
+        <ul class="menu-nav"><li class="active" onclick="showLogInForm()"><a>Sign In</a></li>\
+        <li onclick="showSignUpForm()"><a>Sign Up</a></li></ul>';
  		return div;
  	}
  	return "";
@@ -325,9 +376,10 @@ function getProductHtml (productData){
                     var c_params = productData.data.custom_params;
                     var media = productData.data.media;
                     var productHtml = "<div class='product-img-container' style='background-image: url("+media.preview_image+")'>\
+                            <div class='paytm-logo-right'></div>\
                             <h3 class='product-title'>"+ productData.data.title + "</h3>\
                             <span class='product-desc'>" + productData.data.description + "</span>\
-                            <div class='product-price'><span>&#8377;&nbsp;</span><span>" +  productData.data.amount + "</span></div>\
+                            <div class='product-price'><span class='WebRupee'>&#x20B9;</span> <span id='product-price'>" +  productData.data.amount + "</span></div>\
                         </div>";
                      var productDiv = document.getElementById('prod_pay_details');
                      // productDiv.className = 'mB20';
