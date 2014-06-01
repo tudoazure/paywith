@@ -41,20 +41,8 @@
             <div id="preview_img" class="span6">
             </div>
             <div id="viewContainer" class="span6">
-                <div id="custom-forms-editable" class="span6">
-                <!--<div class="form-group">
-                    <p>
-                        <input type="email" class="form-control" id="d_email" name="d_email" placeholder="Enter your email id" autocomplete="on">
-                    </p> 
-
-                </div> -->
-                </div>
-                <!--<div class="span6">
-                    <p>
-
-                        <button type="submit" class="" id="payNow" style="background: url('assets/images/paywithpaytm.png'); width:238px; height:65px; border:none;"></button>
-                    </p>
-                </div> -->
+                <div id="custom-forms-editable" class="span6"></div>
+                <div id='view' class='span6'></div></div>
             </div>
             
 
@@ -133,95 +121,95 @@
     
     
     
-    function _pay_now_submit() {
+//     function _pay_now_submit() {
         
     
     
-        var $inputs = $('#product-form :input');
-        console.log($inputs);
-        var email = $("#d_email").val();
-        var values = {};
-        var c_name = {};
-        var c_desc = {};
-        var cp = {};
-        $inputs.each(function () {
-            if (this.name != "d_email" && this.name != "title" && this.name != "description" && this.name != "price" && this.name != "currency" && this.name != "") {
+//         var $inputs = $('#product-form :input');
+//         console.log($inputs);
+//         var email = $("#d_email").val();
+//         var values = {};
+//         var c_name = {};
+//         var c_desc = {};
+//         var cp = {};
+//         $inputs.each(function () {
+//             if (this.name != "d_email" && this.name != "title" && this.name != "description" && this.name != "price" && this.name != "currency" && this.name != "") {
                 
-                values[this.name] = $(this).val();
-                cp[$(this).attr("rel")] = $(this).val();
-            }
-        });
+//                 values[this.name] = $(this).val();
+//                 cp[$(this).attr("rel")] = $(this).val();
+//             }
+//         });
     
-        //creating objects of custom parameters
+//         //creating objects of custom parameters
     
     
-        var c_params = JSON.stringify(cp);
+//         var c_params = JSON.stringify(cp);
         
         
     
-        $("#sell-digital").html("");
-//       $("#sell-digital").css({ // "height": "100px", // "margin-top": "150px" // });
+//         $("#sell-digital").html("");
+// //       $("#sell-digital").css({ // "height": "100px", // "margin-top": "150px" // });
 
         
-        $("#sell-digital").html("<div class=\"text-center\">" +
-            "<img src=\""+appConfig.APP_HOST+"assets/images/spinner-md.gif\">" +
-        "</div>");
+//         $("#sell-digital").html("<div class=\"text-center\">" +
+//             "<img src=\""+appConfig.APP_HOST+"assets/images/spinner-md.gif\">" +
+//         "</div>");
         
-        var session_token = readCookie("paytm_session_key");
-        var device_type = 'desktop-browser';
-        if(device.mobile()){
-            device_type = 'mobile-browser';
-        }
-        var formData = new FormData();
-        formData.append("id", pbid);
-        formData.append("d_email", email);
-        formData.append("custom_params", c_params);
-        formData.append("device_type", device_type);
+//         var session_token = readCookie("paytm_session_key");
+//         var device_type = 'desktop-browser';
+//         if(device.mobile()){
+//             device_type = 'mobile-browser';
+//         }
+//         var formData = new FormData();
+//         formData.append("id", pbid);
+//         formData.append("d_email", email);
+//         formData.append("custom_params", c_params);
+//         formData.append("device_type", device_type);
     
-        eraseCookie("transaction_id");
-         __start_transaction(formData);
+//         eraseCookie("transaction_id");
+//          __start_transaction(formData);
         
     
     
-    }
+//     }
     
     /*
      *
      * function to start transaction 
      */
     
-    function __start_transaction(data){
+    // function __start_transaction(data){
         
-        $.ajax({
-            url: appConfig.API_HOST + appConstants.START_TRANSACTION,
-            type: "POST",
-            data: data,
-            processData: false, // tell jQuery not to process the data
-            contentType: false,
-            success: function (responseData) {
+    //     $.ajax({
+    //         url: appConfig.API_HOST + appConstants.START_TRANSACTION,
+    //         type: "POST",
+    //         data: data,
+    //         processData: false, // tell jQuery not to process the data
+    //         contentType: false,
+    //         success: function (responseData) {
                 
-                console.log("start transaction response  data " + responseData);
+    //             console.log("start transaction response  data " + responseData);
                 
-                var txnResponse = $.parseJSON(responseData);
+    //             var txnResponse = $.parseJSON(responseData);
                 
-                if (txnResponse.status == 0) {
-                    console.log("transaction successful" + txnResponse.data.transaction_id);
-                    createCookie("dg_transaction_id", txnResponse.data.transaction_id);
-                    __finish_transaction(txnResponse.data.transation_id);
+    //             if (txnResponse.status == 0) {
+    //                 console.log("transaction successful" + txnResponse.data.transaction_id);
+    //                 createCookie("dg_transaction_id", txnResponse.data.transaction_id);
+    //                 __finish_transaction(txnResponse.data.transation_id);
                     
-                } else {
-                    if(txnResponse.status === 121){
-                        $("#sell-digital").html("<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>");
-                    } else {
-                        console.log("reansaction unsuccessful");
-                        $("#sell-digital").html("<p>"+txnResponse.message+ "</p>");
-                    }
+    //             } else {
+    //                 if(txnResponse.status === 121){
+    //                     $("#sell-digital").html("<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>");
+    //                 } else {
+    //                     console.log("reansaction unsuccessful");
+    //                     $("#sell-digital").html("<p>"+txnResponse.message+ "</p>");
+    //                 }
                     
                     
-                }
-            }
-        });
-    }
+    //             }
+    //         }
+    //     });
+    // }
     
     /*
      *
@@ -229,56 +217,56 @@
      *
      */
         
-    function __finish_transaction(transaction_id){
-        var session_cookie = readCookie("paytm_session_key");
+    // function __finish_transaction(transaction_id){
+    //     var session_cookie = readCookie("paytm_session_key");
         
         
         
-        if (session_cookie == null) {
+    //     if (session_cookie == null) {
             
-            window.location.href = appConfig.OAUTH_HOST + "oauth2/authorize?client_id="+appConfig.OAUTH_CLIENT_ID+"&scope=paytm&response_type=code&redirect_uri=" + appConfig.APP_HOST + "authpayresponse.html";
-        } else {
-                    var device_type = 'desktop-browser'; if(device.mobile()){ device_type = 'mobile-browser'; }
+    //         window.location.href = appConfig.OAUTH_HOST + "oauth2/authorize?client_id="+appConfig.OAUTH_CLIENT_ID+"&scope=paytm&response_type=code&redirect_uri=" + appConfig.APP_HOST + "authpayresponse.html";
+    //     } else {
+    //                 var device_type = 'desktop-browser'; if(device.mobile()){ device_type = 'mobile-browser'; }
 
-                    var formData = new FormData();
-                    var transaction_id = readCookie("dg_transaction_id");
-                    formData.append("transaction_id", transaction_id);
-                    formData.append("session_token", session_cookie);
-                    formData.append("device_type", device_type);
+    //                 var formData = new FormData();
+    //                 var transaction_id = readCookie("dg_transaction_id");
+    //                 formData.append("transaction_id", transaction_id);
+    //                 formData.append("session_token", session_cookie);
+    //                 formData.append("device_type", device_type);
                     
-             $.ajax({
-            url: appConfig.API_HOST + appConstants.FINISH_TRANSACTION,
-            type: "POST",
-            data: formData,
-            processData: false, // tell jQuery not to process the data
-            contentType: false,
-            success: function (responseData) {
+    //          $.ajax({
+    //         url: appConfig.API_HOST + appConstants.FINISH_TRANSACTION,
+    //         type: "POST",
+    //         data: formData,
+    //         processData: false, // tell jQuery not to process the data
+    //         contentType: false,
+    //         success: function (responseData) {
                 
-                console.log("finish transaction  response data " + responseData);
-                var txnResponse = $.parseJSON(responseData);
+    //             console.log("finish transaction  response data " + responseData);
+    //             var txnResponse = $.parseJSON(responseData);
                 
-                if (txnResponse.status == 0) {
-                    console.log("transaction successful");
-                    if(device.mobile()){
-                        $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p><p><a href=\"#\" onclick=\"javascript:window.open('','_self').close();\">Close</a></p></div>");        
-                    } else {
-                        $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>");
-                    }
+    //             if (txnResponse.status == 0) {
+    //                 console.log("transaction successful");
+    //                 if(device.mobile()){
+    //                     $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p><p><a href=\"#\" onclick=\"javascript:window.open('','_self').close();\">Close</a></p></div>");        
+    //                 } else {
+    //                     $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>");
+    //                 }
                     
-                } else if(txnResponse.status == 1001){
-                    console.log("insufficient balance");  
-                    var form_data = txnResponse.data.html_form;
-                    $("#sell-digital").html(form_data);
-                } else {
-                    console.log("transaction failed");
-                    $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>");
-                    $("#sell-digital").html("<p>"+txnResponse.message+ "</p>");
+    //             } else if(txnResponse.status == 1001){
+    //                 console.log("insufficient balance");  
+    //                 var form_data = txnResponse.data.html_form;
+    //                 $("#sell-digital").html(form_data);
+    //             } else {
+    //                 console.log("transaction failed");
+    //                 $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>");
+    //                 $("#sell-digital").html("<p>"+txnResponse.message+ "</p>");
                  
-                }
-            }
-        });
-        }
-    }
+    //             }
+    //         }
+    //     });
+    //     }
+    // }
 </script>
 
 <script>
