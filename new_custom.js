@@ -318,7 +318,7 @@ function getProductHtml (productData){
                     var productHtml = "<div class='product-img-container' style='background-image: url("+media.preview_image+")'>\
                             <h3 class='product-title'>"+ productData.data.title + "</h3>\
                             <span class='product-desc'>" + productData.data.description + "</span>\
-                            <span class='product-price'> Rs " +  productData.data.amount + "</span>\
+                            <div class='product-price'><span>&#8377;&nbsp;</span><span>" +  productData.data.amount + "</span></div>\
                         </div>";
                      var productDiv = document.getElementById('prod_pay_details');
                      // productDiv.className = 'mB20';
