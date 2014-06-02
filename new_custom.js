@@ -1,11 +1,43 @@
 "use strict";
 
+function __get_auth_token(param, authresponse) {
+
+    var postData = "request_code=" + param.code + "&is_seller=" + param.is_seller + "&device_type=" + param.device_type + "&device_id=" + param.device_id + "&device_token=" + param.device_token + "&device_detail=" + param.device_detail;
+
+    ajaxPostRequest(postData, appConstants.GET_OAUTH_TOKEN, function (data) {
+        authresponse(data);
+
+    })
+};
+
+function __update_user_details(formData) {
+    console.log("update user details");
+    ajaxPostRequest(formData, appConstants.UPDATE_SELLER, function (data) {
+        console.log(data);
+    })
+};
+
 /*
  *utility methods
  */
 
+function ajaxPostRequest(formData, url, response) {
+    $.ajax({
+        url: appConfig.API_HOST + url,
+        type: "POST",
+        data: formData,
+        processData: false, // tell jQuery not to process the data
+        contentType: "application/x-www-form-urlencoded",
+
+        success: function (responseData) {
+            var oAuthData = $.parseJSON(responseData);
+            response(oAuthData);
+        }
+    });
+
+};
+
 function createCookie(name, value, days) {
-    
     if (days) {
         var date = new Date();
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -134,12 +166,10 @@ function showFirstPage(){
             window.paytm_session_key = response.data.session.access_token;
             window.ses_user = response.data.user.username;
             window.paytm_user = JSON.stringify(response.data.user);
-            getWalletBalance();
+            getWalletBalance(true);
         }else{
             showError('username',response.message);
         }
-    }else{
-    	console.log(xmlhttp.readyState)
     }
  };
 
@@ -184,7 +214,7 @@ function showFirstPage(){
  	if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
  		var response = JSON.parse(xmlhttp.responseText);
  		if(response.status == 0 && response.message.toLowerCase() == 'success'){
- 			alert('mail sent');
+ 			console.log('mail sent');
  		}else{
  			showError('username',response.message)
  		}
@@ -243,14 +273,14 @@ function showFirstPage(){
  	}
  };
 
- function getWalletBalance(){
+ function getWalletBalance(async){
     var token = window.paytm_session_key;//readCookie("paytm_session_key");
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function(){
         walletBalanceCallback(xmlhttp);
     }
     var url = appConfig.API_HOST + appConstants.USER_WALLET_BALANCE;
-    xmlhttp.open("POST",url,true);
+    xmlhttp.open("POST",url,async);
     xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     xmlhttp.send("session_token="+token);
  };
@@ -264,7 +294,7 @@ function showFirstPage(){
                 openWalletForm(balance);
             }
         }else{
-            showError('emailId',response.message)
+            console.log(response.message);
         }
     }
  };
@@ -295,7 +325,7 @@ function showFirstPage(){
  	div.className ="form-group";
  	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
         <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
- 		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
+ 		<div class='msg label1'><span id='username-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='getPassword()' value='Submit'/>\
  		<div class='width95 mt10' align = 'center'><span class='gry-6'> We will send a link on your registered email </span></div>\
         <div class='width95 mt10' align = 'center'><a href='#' onclick='showLogInForm()'> Sign In </a></div>";
@@ -308,12 +338,12 @@ function showFirstPage(){
  	div.id = "loginForm";
  	div.className ="form-group";
  	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
-        <label class='label'>Email</label>\
+        <label class='label1'>Email</label>\
         <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
- 		<div class='msg label'><span id='username-error' class='error'></span></div>\
-        <label class='label'>Password</label>\
+ 		<div class='msg label1'><span id='username-error' class='error'></span></div>\
+        <label class='label1'>Password</label>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Paytm Password'/>\
- 		<div class='msg label'><span id='password-error' class='error'></span></div>\
+ 		<div class='msg label1'><span id='password-error' class='error'></span></div>\
  		<div class='width95 mt10 mb10' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forget Password?</a></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='loginFormValidate()' value='Sign In'/>\
  		<div class='width95' align = 'center'><span class='gry-6'> Don't have an account? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
@@ -325,15 +355,15 @@ function showFirstPage(){
  	div.id = "signForm";
  	div.className ="form-group";
  	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
-        <label class='label'>Mobile Number</label>\
+        <label class='label1'>Mobile Number</label>\
         <input type='text' name='username' id='mobileNumber' class='form-control field' placeholder='Enter your Mobile Number' />\
- 		<div class='msg label'><span id='mobileNumber-error' class='error'></span></div>\
-        <label class='label'>Email</label>\
+ 		<div class='msg label1'><span id='mobileNumber-error' class='error'></span></div>\
+        <label class='label1'>Email</label>\
  		<input type='text' id='emailId' class='form-control field' placeholder='Enter your Email ID' />\
- 		<div class='msg label'><span id='emailId-error' class='error'></span></div>\
-        <label class='label'>Password</label>\
+ 		<div class='msg label1'><span id='emailId-error' class='error'></span></div>\
+        <label class='label1'>Password</label>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Create your Paytm Password'/>\
- 		<div class='msg label'><span id='password-error' class='error'></span></div>\
+ 		<div class='msg label1'><span id='password-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='signUp()' value='Create Account'/>\
  		<div class='width95' align = 'center'><span class='gry-6'> Already have an account? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
  	changeView(div);
@@ -345,58 +375,59 @@ function showFirstPage(){
  };
 
  function signUpSignInLinksHtml(){
- 	if(!checkLogIn()){
  		var div = document.createElement('div');
  		div.className = 'signup-nav';
-        div.innerHTML = '<div class="signup-text" align="center">\
-        To continue, you need an account!</div>\
-        <ul class="menu-nav"><li class="active" onclick="showLogInForm()"><a>Sign In</a></li>\
-        <li onclick="showSignUpForm()"><a>Sign Up</a></li></ul>';
+        div.innerHTML = '<div class="signup-text" align="center">To continue, you need an account!</div>\
+                        <ul class="menu-nav">\
+                            <li class="active" onclick="showLogInForm()"><a>Sign In</a></li>\
+                            <li onclick="showSignUpForm()"><a>Sign Up</a></li>\
+                        </ul>';
  		return div;
- 	}
- 	return "";
+ 	
  };
 
 function getProductHtml (productData){
 	var maincontainer = document.getElementById("sell-digital");
-            if (productData.status == 0) {
-                if (productData.data.status == 'ACTIVE') {
-                    var c_params = productData.data.custom_params;
-                    var media = productData.data.media;
-                    var productHtml = "<div class='product-img-container' style='background-image: url("+media.preview_image+")'>\
-                            <div class='paytm-logo-right'></div>\
-                            <h3 class='product-title'>"+ productData.data.title + "</h3>\
-                            <span class='product-desc'>" + productData.data.description + "</span>\
-                            <div class='product-price'><span class='WebRupee'>&#x20B9;</span> <span id='product-price'>" +  productData.data.amount + "</span></div>\
-                        </div>";
-                     var productDiv = document.getElementById('prod_pay_details');
-                     productDiv.innerHTML = productHtml;
-                    $.each(c_params, function (key, value) {
-                        if (key != "" && key != null) {
-                            intId = intId + 1;
-                            var input = document.createElement("input");
-                            input.type = "text";
-                            input.className = "form-control";
-                            input.name = "custom_name_" + intId;
-                            input.id = "custom_name_" + intId;
-                            input.placeholder = key;
-                            input.rel = key;
-                            document.getElementById("custom-forms-editable").appendChild(input);
-                        }
-                    });
-					//code for showing SignUP and SignIn Button
-					var buttonDiv = signUpSignInLinksHtml();
-					if(buttonDiv){
-						document.getElementById("custom-forms-editable").appendChild(buttonDiv);
-					}
-
-                } else {
-                    maincontainer.innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
+    if (productData.status == 0) {
+        if (productData.data.status == 'ACTIVE') {
+            var c_params = productData.data.custom_params;
+            var media = productData.data.media;
+            var productHtml = "<div class='product-img-container' style='background-image: url("+media.preview_image+")'>\
+                    <div class='paytm-logo-right'></div>\
+                    <h3 class='product-title'>"+ productData.data.title + "</h3>\
+                    <span class='product-desc'>" + productData.data.description + "</span>\
+                    <div class='product-price'><span class='WebRupee'>&#x20B9;</span> <span id='product-price'>" +  productData.data.amount + "</span></div>\
+                </div>";
+            var productDiv = document.getElementById('prod_pay_details');
+            productDiv.innerHTML = productHtml;
+            $.each(c_params, function (key, value) {
+                if (key != "" && key != null) {
+                    intId = intId + 1;
+                    var input = document.createElement("input");
+                    input.type = "text";
+                    input.className = "form-control";
+                    input.name = "custom_name_" + intId;
+                    input.id = "custom_name_" + intId;
+                    input.placeholder = key;
+                    input.rel = key;
+                    document.getElementById("custom-forms-editable").appendChild(input);
                 }
-
-            } else {
-                maincontainer.innerHTML = "<p>" + productData.message + "</p>";
+            });
+            if(checkLogIn()){
+                getWalletBalance(false);
             }
+            //code for showing SignUP and SignIn Button
+			var buttonDiv = signUpSignInLinksHtml();
+			if(buttonDiv){
+				document.getElementById("custom-forms-editable").appendChild(buttonDiv);
+			}
+        } else {
+            maincontainer.innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
+        }
+
+    } else {
+        maincontainer.innerHTML = "<p>" + productData.message + "</p>";
+    }
 };
 
 function _pay_now_submit() {
@@ -424,9 +455,8 @@ function _pay_now_submit() {
     var c_params = JSON.stringify(cp);
     document.getElementById("view").innerHTML = "";
     document.getElementById("view").innerHTML = "<div class='text-center'>\
-        <img src='"+appConfig.APP_HOST+"assets/images/spinner-md.gif'>\
-    </div>";
-    
+                                                    <img src='"+appConfig.APP_HOST+"assets/images/spinner-md.gif'>\
+                                                </div>";
     var session_token = readCookie("paytm_session_key");
     var device_type = 'desktop-browser';
     // if(device.mobile()){
@@ -529,25 +559,26 @@ function openPGPage(request){
         console.log(request.readyState)
     }
 }
-//New Code End
 
-function __get_pay_prod_details(__pbid__) {
-    $.ajax({
-        url: appConfig.API_HOST + appConstants.GET_MERCHANDISE_INFO + __pbid__ + "/",
-        type: "GET",
-        processData: false, // tell jQuery not to process the data
-        contentType: false,
-        success: function (data) {
-            var productData = $.parseJSON(data);
-            getProductHtml(productData);
-        },
-        error: function(error){
-        	var response = '{"status": 0, "message": "Success", "data": {"status": "ACTIVE", "custom_params": {}, "description": "The go-to book for the modern designer, starting at the basics and taking you right the way through to being able to create stunning iconography.", "title": "The Icon Handbook", "merchandise_type": "", "media": {"preview_thumb": "", "preview_image": "https://s3.amazonaws.com/pwppub/preview/cf199f3e58"}, "created_on": 1401124613912, "max_downloads": 5, "watermark_enabled": true, "payee": 31, "amount": 1.00, "display_tags": true, "extra_params": {}, "updated_on": 1401297934123, "button_id": "bafbab7cb4"}, "extra": {}}'
-        	var productData = $.parseJSON(response);
-        	getProductHtml(productData);
-        }
-    });
+
+function getProductDetails(pbid){
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function(){
+        getProductDetailsCB(xmlHttp);
+    }
+    var url = appConfig.API_HOST + appConstants.GET_MERCHANDISE_INFO + pbid + "/";
+    xmlHttp.open("GET", url,false);
+    xmlHttp.send(null);
 }
+
+ function getProductDetailsCB(xmlHttp){
+    if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
+        var productData = JSON.parse(xmlHttp.responseText);
+        getProductHtml(productData);
+    }
+ };
+
+//New Code End
 
 
 //device js
