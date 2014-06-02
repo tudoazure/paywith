@@ -235,7 +235,7 @@ function showFirstPage(){
  			}
  			var url = appConfig.API_HOST +  appConstants.USER_FORGOT_PASSWORD;
  			xmlhttp.open("POST",url,true);
- 			xmlhttp.setRequestHeader("Content-type","application/json");
+ 			xmlhttp.setRequestHeader("Content-type",false);
  			xmlhttp.send(JSON.stringify({"email":username}));
  		}else{
  			showError('username', 'Please enter your email')
@@ -421,13 +421,6 @@ function _pay_now_submit() {
             cp[$inputs[i].rel] = $inputs[i].value;
         } 
     }
-    // $inputs.each(function () {
-    //     if (this.name != "d_email" && this.name != "title" && this.name != "description" && this.name != "price" && this.name != "currency" && this.name != "") {
-            
-    //         values[this.name] = $(this).val();
-    //         cp[$(this).attr("rel")] = $(this).val();
-    //     }
-    // });
     var c_params = JSON.stringify(cp);
     document.getElementById("view").innerHTML = "";
     document.getElementById("view").innerHTML = "<div class='text-center'>\
@@ -439,113 +432,106 @@ function _pay_now_submit() {
     // if(device.mobile()){
     //     device_type = 'mobile-browser';
     // }
+
+    // Why
+    eraseCookie("transaction_id");
+
     var formData = new FormData();
     formData.append("id", pbid);
     formData.append("d_email", email);
     formData.append("custom_params", c_params);
     formData.append("device_type", device_type);
-
-    eraseCookie("transaction_id");
-     __start_transaction(formData);
-    
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function(){
+        checkoutCB(request);
+    }
+    request.open("POST", appConfig.API_HOST + appConstants.START_TRANSACTION);
+    request.send(formData);
 };
 
-function __start_transaction(data){
-    $.ajax({
-        url: appConfig.API_HOST + appConstants.START_TRANSACTION,
-        type: "POST",
-        data: data,
-        processData: false, // tell jQuery not to process the data
-        contentType: false,
-        success: function (responseData) {
-            console.log("start transaction response  data " + responseData);
-            var txnResponse = $.parseJSON(responseData);
-            if (txnResponse.status == 0) {
-                console.log("transaction successful" + txnResponse.data.transaction_id);
-                createCookie("dg_transaction_id", txnResponse.data.transaction_id);
-                __finish_transaction(txnResponse.data.transaction_id);
-                
+function checkoutCB(request){
+    if (request.readyState == 4 && request.status == 200){
+        var txnResponse = JSON.parse(request.responseText);
+        if(txnResponse.status == 0){
+            console.log("transaction successful" + txnResponse.data.transaction_id);
+            createCookie("dg_transaction_id", txnResponse.data.transaction_id);
+            __finish_transaction(txnResponse.data.transaction_id);
+        }
+        else {
+            if(txnResponse.status === 121){
+                document.getElementById("view").innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
             } else {
-                if(txnResponse.status === 121){
-                    document.getElementById("view").innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
-                } else {
-                    console.log("reansaction unsuccessful");
-                    document.getElementById("view").innerHTML ="<p>"+txnResponse.message+ "</p>";
-                }
+                document.getElementById("view").innerHTML ="<p>"+txnResponse.message+ "</p>";
             }
         }
-    });
+    }else{
+        console.log(request.readyState)
+    }
 };
 
 function __finish_transaction(transaction_id){
     var session_cookie = window.paytm_session_key;//readCookie("paytm_session_key");//todo need to change
+     var session_cookie = window.paytm_session_key;//readCookie("paytm_session_key");//todo need to change
     if (session_cookie == null) {
         showLogInForm();
-    } else {
-                var device_type = 'desktop-browser'; 
-                // if(device.mobile()){ device_type = 'mobile-browser'; } //todo need to change
-                var formData = new FormData();
-                //var transaction_id = readCookie("dg_transaction_id");//to do need to check
-                formData.append("transaction_id", transaction_id);
-                formData.append("session_token", session_cookie);
-                formData.append("device_type", device_type);
-                
-         $.ajax({
-        url: appConfig.API_HOST + appConstants.FINISH_TRANSACTION,
-        type: "POST",
-        data: formData,
-        processData: false, // tell jQuery not to process the data
-        contentType: false,
-        success: function (responseData) {
-            console.log("finish transaction  response data " + responseData);
-            var txnResponse = $.parseJSON(responseData);
-            if (txnResponse.status == 0) {
-                console.log("transaction successful");
-                // if(device.mobile()){ //todo
-                //     $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p><p><a href=\"#\" onclick=\"javascript:window.open('','_self').close();\">Close</a></p></div>");        
-                // } else {
-                    document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
-                // }
-                
-            } else if(txnResponse.status == 1001){
-                console.log("insufficient balance");  
-                var form_data = txnResponse.data.html_form;
-                var ifrm = document.createElement("IFRAME");
-                ifrm.name = 'myiframe';
-                ifrm.id = 'myiframe';
-                ifrm.style.width = 100 +"%";
-                ifrm.style.height = 100 +"%";
-                
-                document.getElementById('view').innerHTML = form_data;
-                document.getElementById('view').appendChild(ifrm);
-                var form = document.getElementsByTagName('form');
-                form[0].target = ifrm.name;
-                var script = document.getElementById('view').getElementsByTagName('script');
-                if(script){
-                    eval(script[0].text);
-                }
-
-                // document.getElementById('view').appendChild(form_data);  
-                 // $("#view").html(form_data);
-            } else {
-                console.log("transaction failed");
-                if(txnResponse.message){
-                   document.getElementById("view").innerHTML = "<p>"+txnResponse.message+ "</p>"; 
-               }else{
-                    document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
-               }
-                
-                
-             
-            }
+    } 
+    else {
+        var device_type = 'desktop-browser'; 
+        // if(device.mobile()){ device_type = 'mobile-browser'; } //todo need to change
+        var formData = new FormData();
+        //var transaction_id = readCookie("dg_transaction_id");//to do need to check
+        formData.append("transaction_id", transaction_id);
+        formData.append("session_token", session_cookie);
+        formData.append("device_type", device_type);
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function(){
+            openPGPage(request);
         }
-    });
+        request.open("POST", appConfig.API_HOST + appConstants.FINISH_TRANSACTION);
+        request.send(formData);
+    }
+};
+
+function openPGPage(request){
+    if (request.readyState == 4 && request.status == 200){
+        var txnResponse = JSON.parse(request.responseText);
+        if(txnResponse.status == 0){
+            document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
+        }
+        else if(txnResponse.status == 1001){
+            var form_data = txnResponse.data.html_form;
+            var ifrm = document.createElement("IFRAME");
+            ifrm.name = 'myiframe';
+            ifrm.id = 'myiframe';
+            ifrm.style.width = 100 +"%";
+            ifrm.style.height = 100 +"%";
+            
+            document.getElementById('view').innerHTML = form_data;
+            document.getElementById('view').appendChild(ifrm);
+            var form = document.getElementsByTagName('form');
+            form[0].target = ifrm.name;
+            var script = document.getElementById('view').getElementsByTagName('script');
+            if(script){
+                eval(script[0].text);
+            }
+
+            // document.getElementById('view').appendChild(form_data);  
+             // $("#view").html(form_data);
+        } else {
+            console.log("transaction failed");
+            if(txnResponse.message){
+               document.getElementById("view").innerHTML = "<p>"+txnResponse.message+ "</p>"; 
+           }else{
+                document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
+           }
+        }
+    }else{
+        console.log(request.readyState)
     }
 }
 //New Code End
 
 function __get_pay_prod_details(__pbid__) {
-
     $.ajax({
         url: appConfig.API_HOST + appConstants.GET_MERCHANDISE_INFO + __pbid__ + "/",
         type: "GET",
