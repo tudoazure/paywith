@@ -16,12 +16,12 @@ var appConfig = {
 //     OAUTH_HOST: "<%= OAUTH_HOST %>",
 //     OAUTH_REDIRECT_URI: "<%= OAUTH_REDIRECT_URI %>",
 //     PAY_BUTTON_URL: "<%= PAY_BUTTON_URL %>"
-
 // };
 var appConstants = {
     USER_LOGIN: "core/seller/get-oauth-token-using-password/",
     USER_SIGNUP: "core/seller/register-user/",
     USER_FORGOT_PASSWORD: "oauth-api/forgetPass",
+    USER_WALLET_BALANCE: "core/wallet/get-wallet-balance/",
     GET_OAUTH_TOKEN: "core/seller/get-oauth-token/",
     UPDATE_SELLER: "core/seller/update-seller/",
     GET_MERCHANDISE_INFO: "dg/merchandise/get-merchandise-info/",

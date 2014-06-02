@@ -134,10 +134,10 @@ function showFirstPage(){
             window.paytm_session_key = response.data.session.access_token;
             window.ses_user = response.data.user.username;
             window.paytm_user = JSON.stringify(response.data.user);
-            openWalletForm(paytm_user, ses_user,paytm_session_key);
- 		}else{
- 			showError('username',response.message);
- 		}
+            getWalletBalance();
+        }else{
+            showError('username',response.message);
+        }
     }else{
     	console.log(xmlhttp.readyState)
     }
@@ -243,17 +243,47 @@ function showFirstPage(){
  	}
  };
 
- function openWalletForm(paytm_user){
+ function getWalletBalance(){
+    var token = window.paytm_session_key;//readCookie("paytm_session_key");
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function(){
+        walletBalanceCallback(xmlhttp);
+    }
+    var url = appConfig.API_HOST + appConstants.USER_WALLET_BALANCE;
+    xmlhttp.open("POST",url,true);
+    xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xmlhttp.send("session_token="+token);
+ };
+
+  function walletBalanceCallback(xmlhttp){
+    if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+        var response = JSON.parse(xmlhttp.responseText);
+        if(response.status == 0 && response.message.toLowerCase() == 'success'){
+            if(response.data){
+                var balance = parseInt(response.data.amount,10);
+                openWalletForm(balance);
+            }
+        }else{
+            showError('emailId',response.message)
+        }
+    }
+ };
+
+ function openWalletForm(balance){
     var price = document.getElementById('product-price').innerHTML.trim();
-    var paytm_user =  JSON.parse(paytm_user);
+    var paytm_user = window.paytm_user;//readCookie("paytm_user")
+    paytm_user =  JSON.parse(paytm_user);
     var username =  paytm_user.first_name ? paytm_user.first_name + paytm_user.last_name : paytm_user.email;
     var div = document.createElement('div');
     div.id = "walletForm";
     div.className ="form-group";
     div.innerHTML = "<div class='span6 header'>\
-        <div class='span3 padd fl'><span class='fb f12'>"+username+"</span><br/><a class='logout' href='#', onclick='logOut()'>Logout</a></div>\
-        <div class='fr padd1'><span>Balance<span></div>\
-        </div>\
+                        <div class='span3 padd fl'><span class='fb f12'>"+username+"</span><br/><a class='logout' href='#', onclick='logOut()'>Logout</a></div>\
+                        <div class='fr padd1'>\
+                            <span>Balance</span>\
+                            <div class='wallet-balance'><span class='WebRupee'>&#x20B9;</span> <span id='wb-balance'>" +  balance + "</span></div>\
+                        </div>\
+                    </div>\
         <div class='width95 mt10 clear' align = 'center'><span>Continue with your payment</span></div>\
         <input type='submit' class='btn btn-primary field form-control' onclick='_pay_now_submit()' value='Pay "+price+"'/>";
     changeView(div);
