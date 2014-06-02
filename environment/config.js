@@ -19,6 +19,9 @@ var appConfig = {
 
 // };
 var appConstants = {
+    USER_LOGIN: "core/seller/get-oauth-token-using-password/",
+    USER_SIGNUP: "core/seller/register-user/",
+    USER_FORGOT_PASSWORD: "oauth-api/forgetPass",
     GET_OAUTH_TOKEN: "core/seller/get-oauth-token/",
     UPDATE_SELLER: "core/seller/update-seller/",
     GET_MERCHANDISE_INFO: "dg/merchandise/get-merchandise-info/",

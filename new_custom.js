@@ -148,7 +148,7 @@ function showFirstPage(){
  	if(username && password){
 	 	xmlhttp=new XMLHttpRequest();
 	 	if(!url){
-	 		var url = "https://paywith.paytm.com/api/core/seller/get-oauth-token-using-password/";
+	 		var url = appConfig.API_HOST + appConstants.USER_LOGIN;
 	 	}
 		xmlhttp.onreadystatechange = function()
 		{
@@ -171,7 +171,7 @@ function showFirstPage(){
  			if(response.data){
  				var username = response.data.email;
  				var password = response.data.code;
- 				var loginUrl = "https://paywith.paytm.com/api/core/seller/get-oauth-token/"
+ 				var loginUrl = appConfig.API_HOST + appConstants.GET_OAUTH_TOKEN;
  				login(loginUrl, username, password, true);
  			}
  		}else{
@@ -204,7 +204,7 @@ function showFirstPage(){
  			xmlhttp.onreadystatechange = function(){
  				signupCallback(xmlhttp);
  			}
- 			var url = "https://paywith.paytm.com/api/core/seller/register-user/"
+ 			var url = appConfig.API_HOST + appConstants.USER_SIGNUP;
  			xmlhttp.open("POST",url,true);
  			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
  			xmlhttp.send("mobileNumber="+mobileNumber+"&password="+password+"&email="+emailId);
@@ -233,7 +233,7 @@ function showFirstPage(){
  			xmlhttp.onreadystatechange = function(){
  				forgetPwdCallback(xmlhttp);
  			}
- 			var url = "http://dev-paywith.paytm.com/api/oauth-api/forgetPass"; 
+ 			var url = appConfig.API_HOST +  appConstants.USER_FORGOT_PASSWORD;
  			xmlhttp.open("POST",url,true);
  			xmlhttp.setRequestHeader("Content-type","application/json");
  			xmlhttp.send(JSON.stringify({"email":username}));

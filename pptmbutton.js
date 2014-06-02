@@ -402,7 +402,7 @@ _pptm.apps = _pptm.apps || {};
 
             } else {
                 TINY.box.show({
-                    iframe: 'file:///home/pradeep/Projects/paywith/new_payment_details.html?pbid=' + data.items.pbid.value,
+                    iframe: 'new_payment_details.html?pbid=' + data.items.pbid.value, // Put Path to your local new_payment-details
                     boxid: 'frameless',
                     width: width,
                     height: height,
