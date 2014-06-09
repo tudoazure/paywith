@@ -1,15 +1,13 @@
-body{
+.body-payment-details{
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	font-size: 12px;
-	line-height: 1.42857143;
-	color: #333;
-	background-color: #f8fafb;
-	margin: 0;
-	overflow-x: hidden;
-	overflow-y: auto;
+    font-size: 12px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #f8fafb;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
-
-
 .signup-nav{margin:0 0 15px 0px;line-height: 1.65;}
 .signup-nav .signup-text{color: #666; font-size: 13px;}
 .tb-bb{bordertop:1px solid #cbcbcb; border-bottom:1px solid #cbcbcb;}
@@ -36,6 +34,9 @@ body{
 .product-img-container {
 	width:100%;
 	height:35%;
+	background-repeat: no-repeat;
+	background-position: center top;
+	background-size: 100% 100%;
 }
 
 .product-image {
@@ -51,7 +52,7 @@ body{
 	top: 25px; 
 	left: 10px;
 	width: 100%;
-	color: #fff;
+	color: #000;
 	font-size: 18px;
 }
 
@@ -59,7 +60,7 @@ body{
 	position: absolute; 
 	top: 125px; 
 	left: 10px;
-	color: #fff;
+	color: #000;
 	font-size: 14px;
 }
 
@@ -69,7 +70,7 @@ body{
 	top: 80px;
 	left: 10px;
 	width: 90%;
-	color: #fff;
+	color: #000;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: -webkit-box;
@@ -187,6 +188,3 @@ input.error, select.error, textarea.error, div.error {
 	-moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px #d59392 !important;
 	box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px #d59392 !important;
 }
-
-
-

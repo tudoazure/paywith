@@ -73,10 +73,10 @@ function __get_parameter_by_name(name) {
 
 
 function logOut() {
-    eraseCookie("session_token");
     eraseCookie("dg_transaction_id");
-    eraseCookie("b_transaction_id");
-    eraseCookie("device_type");
+    eraseCookie("paytm_session_key");
+    eraseCookie("paytm_user");
+    eraseCookie("ses_user");
     showFirstPage();
 }
 
@@ -405,7 +405,7 @@ function getProductHtml (productData){
                     intId = intId + 1;
                     var input = document.createElement("input");
                     input.type = "text";
-                    input.className = "form-control";
+                    input.className = "form-control field";
                     input.name = "custom_name_" + intId;
                     input.id = "custom_name_" + intId;
                     input.placeholder = key;
