@@ -31,7 +31,7 @@ _payWithPaytm.controller('productsController', ["$scope", "productFactory", "$mo
         $scope.future = null;
         $scope.past = null;
 
-        productPaginationCtrl($scope, formData, productUrl, productFactory);
+        productPaginationCtrl($scope, formData, productUrl, productFactory, $location);
 
         if ($scope.limit) {
             $scope.prevLimit = $scope.limit;
@@ -46,7 +46,7 @@ _payWithPaytm.controller('productsController', ["$scope", "productFactory", "$mo
             console.log("prev limit :" + $scope.prevLimit);
             if (!$scope.prevLimit) {
                 productUrl = config.API_HOST + appConstants.GET_ALL_MERCHANDISE + "?" + $scope.future;
-                productPaginationCtrl($scope, formData, productUrl, productFactory);
+                productPaginationCtrl($scope, formData, productUrl, productFactory, $location);
                 if ($scope.limit == true) {
                     $scope.prevLimit = true;
                     $scope.nextLimit = false;
@@ -63,7 +63,7 @@ _payWithPaytm.controller('productsController', ["$scope", "productFactory", "$mo
             if (!$scope.nextLimit) {
                 productUrl = config.API_HOST + appConstants.GET_ALL_MERCHANDISE + "?" + $scope.past;
 
-                productPaginationCtrl($scope, formData, productUrl, productFactory);
+                productPaginationCtrl($scope, formData, productUrl, productFactory, $location);
 
                 if ($scope.limit == true) {
 
@@ -152,7 +152,7 @@ _payWithPaytm.controller('productsController', ["$scope", "productFactory", "$mo
 
 
 
-var productPaginationCtrl = function ($scope, formData, productUrl, productFactory) {
+var productPaginationCtrl = function ($scope, formData, productUrl, productFactory, $location) {
 
     productFactory.list(formData, productUrl).success(function (response) {
         //when session code invalid
@@ -177,11 +177,11 @@ var productPaginationCtrl = function ($scope, formData, productUrl, productFacto
                 $scope.searchResultDiv = false;
 
 
-//                var pagination = response.data.pagination;
-//
-//                $scope.future = response.data.pagination.future;
-//                $scope.past = response.data.pagination.past;
-//                $scope.limit = response.data.pagination.limit;
+                //                var pagination = response.data.pagination;
+                //
+                //                $scope.future = response.data.pagination.future;
+                //                $scope.past = response.data.pagination.past;
+                //                $scope.limit = response.data.pagination.limit;
 
             }
         }
@@ -207,7 +207,7 @@ var productPaginationCtrl = function ($scope, formData, productUrl, productFacto
 };
 
 //for minification
-productPaginationCtrl.$inject = ["$scope", "formData", "buttonUrl", "buttonactory"];
+productPaginationCtrl.$inject = ["$scope", "formData", "buttonUrl", "buttonactory", "$location"];
 
 
 

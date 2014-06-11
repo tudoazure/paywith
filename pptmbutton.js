@@ -6,7 +6,7 @@ _pptm.apps = _pptm.apps || {};
 
 (function (document) {
     var app = {},
-        _pptmURL = 'http://paywith.paytm.com/api/core/button/start-transaction/', //
+        _pptmURL = '/* @echo URL */core/button/start-transaction/',
         _btnCode = 'JavaScriptButton_{type}',
         _pptmButtonURL = 'https://paywith.paytm.com/assets/images/paywithpaytm.png',
         _prettyParams = {
@@ -387,22 +387,20 @@ _pptm.apps = _pptm.apps || {};
         _pptmInputTag.className = 'pptm-button ' + size;
 
 
-        var height = 500;
-        var width = 400;
-
-
+        var height = 450;
+        var width = 350;
 
         _pptmInputTag.onclick = function () {
             var device_type = getDeviceType();
             if (device_type === 'mobile-browser') {
                 var windowSize = "width=" + window.innerWidth + ",height=" + window.innerHeight + ",scrollbars=no";
-
-                var url = data.items.url.value + 'new_payment_details.html?pbid=' + data.items.pbid.value + "&return_url=" + document.location.href;
+                // var url = data.items.url.value + 'payment_details.html?pbid=' + data.items.pbid.value + "&return_url=" + document.location.href;
+                var url = 'file:///home/pradeep/Projects/paywith/payment_details.html?pbid=' + data.items.pbid.value + "&return_url=" + document.location.href;
                 window.open(url, 'popup', windowSize);
 
             } else {
                 TINY.box.show({
-                    iframe: 'new_payment_details.html?pbid=' + data.items.pbid.value, // Put Path to your local new_payment-details
+                    iframe: 'file:///home/pradeep/Projects/paywith/payment_details.html?pbid=' + data.items.pbid.value,
                     boxid: 'frameless',
                     width: width,
                     height: height,

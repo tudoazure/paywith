@@ -38,8 +38,11 @@ function ajaxPostRequest(formData, url, response) {
 
 }
 
+/*
+ *utility methods
+ */
+
 function createCookie(name, value, days) {
-    
     if (days) {
         var date = new Date();
         date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -74,74 +77,586 @@ function __get_parameter_by_name(name) {
 }
 
 
-
-
 function logOut() {
-    eraseCookie("session_token");
     eraseCookie("dg_transaction_id");
-    eraseCookie("b_transaction_id");
-    eraseCookie("device_type");
+    eraseCookie("paytm_session_key");
+    eraseCookie("paytm_user");
+    eraseCookie("ses_user");
+    showFirstPage();
 }
-
-
 
 
 /*
  *function to get pay product details
  *
  */
-function __get_pay_prod_details(__pbid__) {
+ //New Code start
 
-    $.ajax({
-        url: appConfig.API_HOST + appConstants.GET_MERCHANDISE_INFO + __pbid__ + "/",
-        type: "GET",
-        processData: false, // tell jQuery not to process the data
-        contentType: false,
-        success: function (data) {
+function showFirstPage(){
+    document.getElementById("view").innerHTML = "";
+    document.getElementById("custom-forms-editable").style.display = 'inline'
+};
 
+ function changeView(view){
+    document.getElementById("view").innerHTML = "";
+    document.getElementById("view").appendChild(view);
+    document.getElementById("custom-forms-editable").style.display = 'none'
+ };
 
-            var productData = $.parseJSON(data);
-            console.log(productData);
-            if (productData.status == 0) {
-                if (productData.data.status == 'ACTIVE') {
+ function showError(elId, message){
+    document.getElementById(elId).classList.add('error');
+    var errorDiv = document.getElementById(elId+'-error');
+    errorDiv.style.display = 'inline';
+    errorDiv.innerHTML = message;
+ };
 
-                    var c_params = productData.data.custom_params;
+ function hideError(elId, message){
+    document.getElementById(elId).classList.remove('error');
+    var errorDiv = document.getElementById(elId+'-error');
+    errorDiv.style.display = 'none';
+    errorDiv.innerHTML = "";
+ };
 
-                    var media = productData.data.media;
-
-                    $("#title").val(productData.data.title);
-                    $("#price").val(productData.data.amount);
-                    $("#description").val(productData.data.description);
-                    $("#prod_pay_details").html("<h3>" + productData.data.title + "</h3>" +
-                        "<p><img src=\"" + media.preview_image + "\" class=\"img-responsive\"></p>" +
-                        "<p>" + productData.data.description + "</p>" +
-                        "<p>Price " + productData.data.amount + " INR</p>");
-
-                    $.each(c_params, function (key, value) {
-                        if (key != "" && key != null) {
-                            intId = intId + 1;
-                            var customFieldsHtml = "<p><input type=\"text\" class=\"form-control\" name=\"custom_name_" + intId + "\" id=\"custom_name_" + intId + "\" placeholder=\"" + key + "\" rel=\"" + key + "\"></p>";
-
-
-
-                            //alert(customFieldsHtml);
-
-                            $("#custom-forms-editable").append(customFieldsHtml);
-                        }
-                    });
-
-                } else {
-                    $("#sell-digital").html("<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>");
+ function hideAllError(form){
+    if(form){
+        var spans = form.getElementsByTagName('span');
+        var inputs = form.getElementsByTagName('input');
+        if(spans.length){
+            for(var i=0; i<spans.length; i++){
+                if(spans[i].classList.contains('error')){
+                    spans[i].style.display = 'none';
                 }
+            }
+        }
+        if(inputs.length){
+            for(var i=0; i<inputs.length; i++){
+                if(inputs[i].classList.contains('error')    ){
+                    inputs[i].classList.remove('error');
+                }
+            }
+        }
+    }
+ }
 
-            } else {
-                $("#sell-digital").html("<p>" + productData.message + "</p>");
+ function loginFormValidate(){
+    var xmlhttp;
+    var loginForm = document.getElementById('loginForm');
+    hideAllError(loginForm);
+    if(loginForm){
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+        if(username && password){
+            login('',username, password);
+        }else{
+            if(!username){
+                showError('username', "Please enter your email.");
+            }
+            if(!password){
+                showError('password', "Please enter your password.");
+            }
+        }
+    }
+
+ };
+
+ function loginCallback(xmlhttp){
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200){
+        var response = JSON.parse(xmlhttp.responseText);
+        if(response.status == 0 && response.message.toLowerCase() == 'success'){
+            createCookie("paytm_session_key", response.data.session.session_token, 10); 
+            createCookie("ses_user", response.data.user.username, 10);
+            createCookie("paytm_user", JSON.stringify(response.data.user), 10);
+            //to be removed
+            window.paytm_session_key = response.data.session.session_token;
+            window.ses_user = response.data.user.username;
+            window.paytm_user = JSON.stringify(response.data.user);
+            getWalletBalance();
+        }else{
+            showError('username',response.message);
+        }
+    }
+ };
+
+ function login(url, username, password, isSignup){
+    var xmlhttp;
+    if(username && password){
+        xmlhttp=new XMLHttpRequest();
+        if(!url){
+            var url = appConfig.API_HOST + appConstants.USER_LOGIN;
+        }
+        xmlhttp.onreadystatechange = function()
+        {
+            loginCallback(xmlhttp);
+        };
+        xmlhttp.open("POST",url,true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        if(isSignup){
+           xmlhttp.send("device_token=web-token&is_seller=true&device_type=web&device_detail=["+navigator.userAgent+"]&request_code="+password+"&device_id=dev-id"); 
+       }else{
+            xmlhttp.send("username="+username+"&device_token=web-token&is_seller=true&device_type=web&device_detail=["+navigator.userAgent+"]&password="+password+"&device_id=dev-id");
+       }
+    }
+ };
+
+ function signupCallback(xmlhttp){
+    if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+        var response = JSON.parse(xmlhttp.responseText);
+        if(response.status == 0 && response.message.toLowerCase() == 'success'){
+            if(response.data){
+                var username = response.data.email;
+                var password = response.data.code;
+                var loginUrl = appConfig.API_HOST + appConstants.GET_OAUTH_TOKEN;
+                login(loginUrl, username, password, true);
+            }
+        }else{
+            showError('emailId',response.message)
+        }
+    }
+ };
+
+ function forgetPwdCallback (xmlhttp) {
+    if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+        var response = JSON.parse(xmlhttp.responseText);
+        if(response.status == 0 && response.message.toLowerCase() == 'success'){
+            console.log('mail sent');
+        }else{
+            showError('username',response.message)
+        }
+    }
+ };
+
+ function signUp(){
+    var xmlhttp;
+    var signupForm = document.getElementById('signForm');
+    hideAllError(signupForm);
+    if(signupForm){
+        var mobileNumber = document.getElementById('mobileNumber').value;
+        var emailId = document.getElementById('emailId').value;
+        var password = document.getElementById('password').value;
+        if(mobileNumber && emailId && password){
+            xmlhttp=new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function(){
+                signupCallback(xmlhttp);
+            }
+            var url = appConfig.API_HOST + appConstants.USER_SIGNUP;
+            xmlhttp.open("POST",url,true);
+            xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+            xmlhttp.send("mobileNumber="+mobileNumber+"&password="+password+"&email="+emailId);
+        }else{
+            if(!mobileNumber){
+                showError('mobileNumber','Please enter your mbile number');
+            }
+            if(!emailId){
+                showError('emailId','Please enter your email');
+            }
+            if(!password){
+                showError('password','Please enter your password');
+            }
+        }
+    }
+
+ };
+
+ function getPassword(){
+    var xmlhttp;
+    var forgetPwdForm = document.getElementById('forgetPwdForm');
+    if(forgetPwdForm){
+        var username = document.getElementById('username').value;
+        if(username){
+            xmlhttp=new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function(){
+                forgetPwdCallback(xmlhttp);
+            }
+            var url = appConfig.API_HOST +  appConstants.USER_FORGOT_PASSWORD;
+            xmlhttp.open("POST",url,true);
+            xmlhttp.setRequestHeader("Content-type","application/json");
+            xmlhttp.send(JSON.stringify({"email":username}));
+        }else{
+            showError('username', 'Please enter your email')
+        }
+    }
+ };
+
+ function getWalletBalance(async){
+    var token = window.paytm_session_key; //readCookie("paytm_session_key"); 
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function(){
+        walletBalanceCallback(xmlhttp);
+    }
+    var url = appConfig.API_HOST + appConstants.USER_WALLET_BALANCE;
+    xmlhttp.open("POST",url,async);
+    xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+    xmlhttp.send("session_token="+token);
+ };
+
+  function walletBalanceCallback(xmlhttp){
+    if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+        var response = JSON.parse(xmlhttp.responseText);
+        if(response.status == 0 && response.message.toLowerCase() == 'success'){
+            if(response.data){
+                var balance = parseInt(response.data.amount,10);
+                openWalletForm(balance);
+            }
+        }else{
+            console.log(response.message);
+        }
+    }
+ };
+
+ function openWalletForm(balance){
+    var price = document.getElementById('product-price').innerHTML.trim();
+    var paytm_user =  window.paytm_user; //readCookie("paytm_user");
+    paytm_user =  JSON.parse(paytm_user);
+    var username =  paytm_user.first_name ? paytm_user.first_name + paytm_user.last_name : paytm_user.email;
+    var div = document.createElement('div');
+    div.id = "walletForm";
+    div.className ="form-group";
+    div.innerHTML = "<div class='span6 header'>\
+                        <div class='span3 padd fl' style='text-align:center'><span class='fb f12'>"+username+"</span><br/><a class='logout' href='#', onclick='logOut()'>Logout</a></div>\
+                        <div class='fr padd1' style='text-align:center'>\
+                            <span class='fb'>Paytm Cash Balance</span>\
+                            <div class='wallet-balance'><span class='WebRupee'>&#x20B9;</span> <span id='wb-balance'>" +  balance + "</span></div>\
+                        </div>\
+                    </div>\
+        <div class='width95 mt10 clear' align = 'center'><span>Continue with your payment</span></div>\
+        <div>\
+            <span onclick='_pay_now_submit()'><a class='button_paytm' style='width:64%;margin-left:15%;font-size:13px;'>Pay <span class='WebRupee'>&#x20B9; </span>"+price+"</a></span>\
+        </div>";
+    changeView(div);
+ }
+
+ function showforgetPwdForm(){
+    var div = document.createElement('div');
+    div.id = "forgetPwdForm";
+    div.className ="form-group";
+    div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
+        <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
+        <div class='msg label1 pt10'><span id='username-error' class='error'></span></div>\
+        <div>\
+            <span onclick='getPassword()'><a class='button_paytm' style='width:64%;margin-left:15%;font-size:13px;'>Submit</a></span>\
+        </div>\
+        <div class='width95 mt10' align = 'center'><span class='gry-6'> We will send a link on your registered email </span></div>\
+        <div class='width95 mt10' align = 'center'><a href='#' onclick='showLogInForm()'> Sign In </a></div>";
+
+    changeView(div);
+ };
+
+ function showLogInForm(){
+    var div = document.createElement('div');
+    div.id = "loginForm";
+    div.className ="form-group";
+    div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
+        <div>\
+            <span class='label1'>Email</span>\
+            <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
+            <div class='msg label1'><span id='username-error' class='error'></span></div>\
+        </div>\
+        <div class='pt10'>\
+            <span class='label1'>Password</span>\
+            <input type='password' name='password' id='password' class='form-control field' placeholder = 'Paytm Password'/>\
+            <div class='msg label1'><span id='password-error' class='error'></span></div>\
+        </div>\
+        <div class='width95 mt10 mb10' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forgot Password?</a></div>\
+        <div>\
+            <span onclick='loginFormValidate()'><a class='button_paytm' style='width:64%;margin-left:15%;font-size:13px;'>Sign In</a></span>\
+        </div>\
+        <div class='width95 pt10' align = 'center'><span class='gry-6'> Don't have an account? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
+    changeView(div);
+ };
+
+ function showSignUpForm(){
+    var div = document.createElement('div');
+    div.id = "signForm";
+    div.className ="form-group";
+    div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
+        <div>\
+            <span class='label1'>Mobile Number</span>\
+            <input type='text' name='username' id='mobileNumber' class='form-control field' placeholder='Enter your Mobile Number' />\
+            <div class='msg label1'><span id='mobileNumber-error' class='error'></span></div>\
+        </div>\
+        <div class='pt10'>\
+            <span class='label1'>Email</span>\
+            <input type='text' id='emailId' class='form-control field' placeholder='Enter your Email ID' />\
+            <div class='msg label1'><span id='emailId-error' class='error'></span></div>\
+        </div>\
+        <div class='pt10'>\
+            <span class='label1'>Password</span>\
+            <input type='password' name='password' id='password' class='form-control field' placeholder = 'Create your Paytm Password'/>\
+            <div class='msg label1'><span id='password-error' class='error'></span></div>\
+        </div>\
+        <div class='pt10'>\
+            <span onclick='signUp()'><a class='button_paytm' style='width:64%;margin-left:15%;font-size:13px;'>Create Account</a></span>\
+        </div>\
+        <div class='width95 pt10' align = 'center'><span class='gry-6'> Already have an account? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
+    changeView(div);
+ };
+
+ function checkLogIn(){
+    var session_cookie = readCookie("paytm_session_key");
+    return session_cookie;
+ };
+
+ function signUpSignInLinksHtml(){
+    var div = document.createElement('div');
+    div.className = 'signup-nav pt5';
+    div.innerHTML = '<div class="signup-text" align="center">To continue, you need an account!</div>\
+                    <div>\
+                        <span onclick="showLogInForm()"><a class="button_paytm" style="width:34%;margin-left: 15%;">Sign In</a></span>\
+                        <span onclick="showSignUpForm()"><a class="button_paytm" style="width:34%;">Sign Up</a></span>\
+                    </div>';
+    return div;
+ };
+
+ function continueLinksHtml(){
+    var div = document.createElement('div');
+    div.className = 'signup-nav pt5';
+    div.innerHTML = '<div>\
+                        <span onclick="getWalletBalance(false)"><a class="button_paytm" style="width:70%;margin-left:15%;">Continue</a></span>\
+                    </div>';
+    return div;
+ };
+
+function getProductHtml (productData){
+    var maincontainer = document.getElementById("sell-digital");
+    if (productData.status == 0) {
+        if (productData.data.status == 'ACTIVE') {
+            var c_params = productData.data.custom_params;
+            var media = productData.data.media;
+            var productHtml = "<div class='fl span3' style='height:100%'><div class='product-detail'>\
+                    <span class='product-title'>"+ productData.data.title + "</span>\
+                    <span class='product-desc'>" + productData.data.description + "</span>\
+                    <div class='product-price'><span class='WebRupee'>&#x20B9;</span> <span id='product-price'>" +  productData.data.amount + "</span></div>\
+                    </div></div>\
+                    <div style='background-image: url("+media.preview_image+")' class=' fr span3 product-img-container'>\
+                    <div class='paytm-logo-div'><div class='paytm-logo-right'></div></div></div>";
+            var productDiv = document.getElementById('prod_pay_details');
+            productDiv.innerHTML = productHtml;
+
+            var productSmallHtml = "<div class='fl span3' style='height:100%'><div class='product-detail'>\
+                    <span class='product-title'>"+ productData.data.title + "</span>\
+                    <span class='product-desc'>" + ''+ "</span>\
+                    <div class='product-price'><span class='WebRupee'></span> <span id='product-price'>" + '' + "</span></div>\
+                    </div></div>\
+                    <div style='background-image: url("+ ''+")' class=' fr span3 product-img-container'>\
+                    <div class='paytm-logo-div'><div class='paytm-logo-right'></div></div></div>";
+            var productSummary = document.getElementById('prod_summary');
+            productSummary.innerHTML = productSmallHtml;
+
+            var emailInput = document.createElement("input");
+            emailInput.type = "text";
+            emailInput.className = "form-control mL15pc";
+            emailInput.name = "d_name";
+            emailInput.id = "d_email";
+            emailInput.placeholder = "Enter your Email Id";
+            emailInput.rel = "d_email";
+            document.getElementById("custom-forms-editable").appendChild(emailInput);
+
+            $.each(c_params, function (key, value) {
+                if (key != "" && key != null) {
+                    intId = intId + 1;
+                    var input = document.createElement("input");
+                    input.type = "text";
+                    input.className = "form-control mL15pc";
+                    input.name = "custom_name_" + intId;
+                    input.id = "custom_name_" + intId;
+                    input.placeholder = key;
+                    input.rel = key;
+                    document.getElementById("custom-forms-editable").appendChild(input);
+                }
+            });
+            // if(checkLogIn()){
+            //     getWalletBalance(false);
+            // }
+            //code for showing SignUP and SignIn Button
+            
+
+            if(checkLogIn()){
+                var continueButtonDiv = continueLinksHtml();
+                if(continueButtonDiv){
+                    document.getElementById("custom-forms-editable").appendChild(continueButtonDiv);
+                }
+            }
+            else{
+                var buttonDiv = signUpSignInLinksHtml();
+                if(buttonDiv){
+                    document.getElementById("custom-forms-editable").appendChild(buttonDiv);
+                }
             }
 
+        } else {
+            maincontainer.innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
         }
 
-    });
+    } else {
+        maincontainer.innerHTML = "<p>" + productData.message + "</p>";
+    }
+};
+
+function _pay_now_submit() {
+    var div = document.getElementById('custom-forms-editable');
+    var $inputs = div.getElementsByTagName('input');
+    console.log($inputs);
+    var user = window.paytm_user; //readCookie('paytm_user'); // todo need to change
+    if(user){
+        user = JSON.parse(user);
+    }
+    var email = user.email;
+    var values = {};
+    var c_name = {};
+    var c_desc = {};
+    var cp = {};
+    for(var i= 0 ; i< $inputs.length ; i++){
+       if ($inputs[i].name != "d_email" && $inputs[i].name != "title" && 
+           $inputs[i].name != "description" && $inputs[i].name != "price" && 
+           $inputs[i].name != "currency" && $inputs[i].name != "") 
+       {
+            values[$inputs[i].name] = $inputs[i].value;
+            cp[$inputs[i].rel] = $inputs[i].value;
+        } 
+    }
+    var c_params = JSON.stringify(cp);
+    document.getElementById("view").innerHTML = "";
+    document.getElementById("view").innerHTML = "<div class='text-center'>\
+                                                    <img src='"+appConfig.APP_HOST+"assets/images/spinner-md.gif'>\
+                                                </div>";
+    var session_token = window.paytm_session_key; //readCookie("paytm_session_key");
+    var device_type = 'desktop-browser';
+    // if(device.mobile()){
+    //     device_type = 'mobile-browser';
+    // }
+
+    eraseCookie("transaction_id");
+
+    var formData = new FormData();
+    formData.append("id", pbid);
+    formData.append("d_email", email);
+    formData.append("custom_params", c_params);
+    formData.append("device_type", device_type);
+    var request = new XMLHttpRequest();
+    request.onreadystatechange = function(){
+        checkoutCB(request);
+    }
+    request.open("POST", appConfig.API_HOST + appConstants.START_TRANSACTION);
+    request.send(formData);
+};
+
+function checkoutCB(request){
+    if (request.readyState == 4 && request.status == 200){
+        var txnResponse = JSON.parse(request.responseText);
+        if(txnResponse.status == 0){
+            console.log("transaction successful" + txnResponse.data.transaction_id);
+            createCookie("dg_transaction_id", txnResponse.data.transaction_id);
+            __finish_transaction(txnResponse.data.transaction_id);
+        }
+        else {
+            if(txnResponse.status === 121){
+                document.getElementById("view").innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
+            } else {
+                document.getElementById("view").innerHTML ="<p>"+txnResponse.message+ "</p>";
+            }
+        }
+    }else{
+        console.log(request.readyState)
+    }
+};
+
+function __finish_transaction(transaction_id){
+    var session_cookie = window.paytm_session_key; //readCookie("paytm_session_key");//todo need to change
+    if (session_cookie == null) {
+        showLogInForm();
+    } 
+    else {
+        var device_type = 'desktop-browser'; 
+        // if(device.mobile()){ device_type = 'mobile-browser'; } //todo need to change
+        var formData = new FormData();
+        //var transaction_id = readCookie("dg_transaction_id");//to do need to check
+        formData.append("transaction_id", transaction_id);
+        formData.append("session_token", session_cookie);
+        formData.append("device_type", device_type);
+        var request = new XMLHttpRequest();
+        request.onreadystatechange = function(){
+            openPGPage(request);
+        }
+        request.open("POST", appConfig.API_HOST + appConstants.FINISH_TRANSACTION);
+        request.send(formData);
+    }
+};
+
+function openPGPage(request){
+    if (request.readyState == 4 && request.status == 200){
+        var txnResponse = JSON.parse(request.responseText);
+        if(txnResponse.status == 0){
+
+            var docProdSummary =document.getElementById("prod_summary");
+            docProdSummary.className=docProdSummary.className.replace("hidden","");
+            docProdSummary.className=docProdSummary.className + " hidden";
+
+            
+            var docProdDetails =document.getElementById("prod_pay_details");
+            docProdDetails.className=docProdDetails.className.replace("hidden","");
+
+            document.getElementById("view").innerHTML = "<div class=\"span6 text-center\" style='padding-top: 20%;font-size: 15px'><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
+        }
+        else if(txnResponse.status == 1001){
+            
+
+            var docProdSummary =document.getElementById("prod_summary");
+            docProdSummary.className=docProdSummary.className.replace("hidden","");
+
+            var docProdDetails =document.getElementById("prod_pay_details");
+            docProdDetails.className=docProdDetails.className.replace("hidden","");
+            docProdDetails.className = docProdDetails.className + " hidden";
+
+            var form_data = txnResponse.data.html_form;
+            var ifrm = document.createElement("IFRAME");
+            ifrm.name = 'myiframe';
+            ifrm.id = 'myiframe';
+            ifrm.style.width = 100 +"%";
+            ifrm.style.height = 100 +"%";
+            
+            document.getElementById('view').innerHTML = form_data;
+            document.getElementById('view').appendChild(ifrm);
+            var form = document.getElementsByTagName('form');
+            form[0].target = ifrm.name;
+            var script = document.getElementById('view').getElementsByTagName('script');
+            if(script){
+                eval(script[0].text);
+            }
+
+            // document.getElementById('view').appendChild(form_data);  
+             // $("#view").html(form_data);
+        } else {
+            console.log("transaction failed");
+            if(txnResponse.message){
+               document.getElementById("view").innerHTML = "<p>"+txnResponse.message+ "</p>"; 
+           }else{
+                document.getElementById("view").innerHTML = "<div class=\"span6 text-center\" style='padding-top: 20%;font-size: 15px'><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
+           }
+        }
+    }else{
+        console.log(request.readyState)
+    }
 }
+
+
+function getProductDetails(pbid){
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function(){
+        getProductDetailsCB(xmlHttp);
+    }
+    var url = appConfig.API_HOST + appConstants.GET_MERCHANDISE_INFO + pbid + "/";
+    xmlHttp.open("GET", url,false);
+    xmlHttp.send(null);
+}
+
+ function getProductDetailsCB(xmlHttp){
+    if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
+        var productData = JSON.parse(xmlHttp.responseText);
+        getProductHtml(productData);
+    }
+ };
+
+//New Code End
 
 
 //device js

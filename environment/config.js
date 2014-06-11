@@ -1,22 +1,12 @@
 var appConfig = {
-    API_HOST: "https://paywith.paytm.com/api/",
-    APP_HOST: "https://paywith.paytm.com/",
+    API_HOST:  "http://dev-paywith.paytm.com/api/",//"<%= API_HOST %>",
+    APP_HOST: "http://dev-paywith.paytm.com/",//"<%= APP_HOST %>",
     PAYMENT_BUTTON_HOST: "<%= PAYMENT_BUTTON_HOST %>",
     OAUTH_CLIENT_ID: "<%= OAUTH_CLIENT_ID %>",
     OAUTH_HOST: "<%= OAUTH_HOST %>",
     OAUTH_REDIRECT_URI: "<%= OAUTH_REDIRECT_URI %>",
     PAY_BUTTON_URL: "<%= PAY_BUTTON_URL %>"
-
 };
-// var appConfig = {
-//     API_HOST: "<%= API_HOST %>",
-//     APP_HOST: "<%= APP_HOST %>",
-//     PAYMENT_BUTTON_HOST: "<%= PAYMENT_BUTTON_HOST %>",
-//     OAUTH_CLIENT_ID: "<%= OAUTH_CLIENT_ID %>",
-//     OAUTH_HOST: "<%= OAUTH_HOST %>",
-//     OAUTH_REDIRECT_URI: "<%= OAUTH_REDIRECT_URI %>",
-//     PAY_BUTTON_URL: "<%= PAY_BUTTON_URL %>"
-// };
 var appConstants = {
     USER_LOGIN: "core/seller/get-oauth-token-using-password/",
     USER_SIGNUP: "core/seller/register-user/",

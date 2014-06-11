@@ -1,5 +1,43 @@
-<div class="text-center">
-    <h1>Payments Page</h1>
+<div class="payments-form">
+    <form name="payments_form" id="payments_form" enctype="multipart/form-data" method="post" payments-form-validation>
+        <div class="form-group">
+            <label for="bank_name">Bank Name</label>
+            <input type="text" class="form-control" id="bank_name" name="bank_name" placeholder="Enter Bank Name" ng-model="bank_name">
+        </div>
+        <div class="form-group">
+            <label for="last_name">Bank Branch Name</label>
+            <input type="text" class="form-control" id="branch_name" name="branch_name" placeholder="Enter Bank Branch Name" ng-model="branch_name">
+        </div>
+        <div class="form-group">
+            <label for="last_name">Beneficiary Name</label>
+            <input type="text" class="form-control" id="beneficiary_name" name="beneficiary_name" placeholder="Enter Beneficiary Name" ng-model="beneficiary_name">
+        </div>
+        <div class="form-group">
+            <label for="Email">Account Number</label>
+            <input type="text" class="form-control" id="account_name" name="account_name" placeholder="Enter Account Name" ng-model="account_name">
+        </div>
+        <div class="form-group">
+            <label for="self-marketplace">Type of Account</label>
+            <select class="form-control" name="type_of_account" ng-model="type_of_account">
+                <option value="SAVINGS">Savings</option>
+                <option value="CURRENT" selected>Current</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="Mobile">IFSC Code</label>
+            <input type="text" class="form-control" id="ifsc_code" name="ifsc_code" placeholder="Enter IFSC Code" ng-model="ifsc_code">
+        </div>
+        <div class="form-group">
+            <label for="Mobile">Cancelled Cheque</label>
+            <input type="file" id="cheque_image" name="cheque_image" accept="image/gif, image/jpeg, image/png, image/bmp" preview-image-model="chequeFile">
+        </div>
+        <div class="form-group">
+            <label for="Mobile">Pan no</label>
+            <input type="text" class="form-control" id="pan_no" name="pan_no" placeholder="Enter Pan No" ng-model="pan_no">
+        </div>
+        <div class="form-group">
 
-    <p>{{ message }}</p>
+            <button type="submit" class="btn btn-primary proceed" id="save-detail">Save Details</button>
+        </div>
+    </form>
 </div>

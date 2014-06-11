@@ -130,8 +130,9 @@ _payWithPaytm.directive("formValidation", ["productFormFactory", "config", "$coo
         }
 }]);
 
-_payWithPaytm.directive("profileFormValidation", ["profileFactory", "config", "$cookies", "$cookieStore", "$location",
-        function (profileFactory, config, $cookies, $cookieStore, $location) {
+_payWithPaytm.directive("profileFormValidation", ["profileFactory", "config", "$cookies", "$cookieStore", "$location", "$timeout",
+
+        function (profileFactory, config, $cookies, $cookieStore, $location, $timeout) {
         return function (scope, element, attrs) {
             scope.loading = true;
             scope.profileFormDiv = false;
@@ -149,14 +150,53 @@ _payWithPaytm.directive("profileFormValidation", ["profileFactory", "config", "$
                 scope.profileFormDiv = true;
                 scope.loading = false;
                 profileFactory.profileFormSubmit(formData, updateUrl).success(function (response) {
-                    scope.loading = true;
-                    scope.profileFormDiv = false;
-                    $location.path("/products");
-                    $cookieStore.put("paytm_user", response.data);
+                    console.log(response);
+                    if (response.status == 0) {
+                        scope.loading = true;
+                        scope.profileFormDiv = false;
 
+
+
+                        createCookie("paytm_user", angular.toJson(response.data), 40);
+                        createCookie("is_profile", "0", 40);
+
+                        console.log("I am here");
+
+                        scope.$watch(function () {
+                            return $cookies.is_profile;
+                        }, function (newValue) {
+                            console.log('Cookie string: ' + $cookies.is_profile);
+                            $location.path("/button");
+                        });
+
+                        $cookies.is_profile = 'first value';
+
+                        $timeout(function () {
+                            $cookies.is_profile = '0';
+                        }, 1000);
+
+
+                    } else {
+                        scope.loading = true;
+                        $location.path("/products");
+                    }
                 });
 
             };
+
+            var deleteCookie = function (name) {
+                createCookie(name, "", -1);
+            };
+
+            var createCookie = function (name, value, days) {
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    var expires = "; expires=" + date.toGMTString();
+                } else var expires = "";
+                document.cookie = name + "=" + value + expires + ";domain=." + window.location.hostname + "; path=/";
+
+            }
             $(element[0]).bootstrapValidator({
                 message: 'This value is not valid',
                 submitHandler: function (validator, form) {
@@ -211,6 +251,15 @@ _payWithPaytm.directive("profileFormValidation", ["profileFactory", "config", "$
 
                         }
                     },
+                    terms: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Please accept the above terms and conditions'
+                            }
+
+
+                        }
+                    },
                     user_mobile: {
                         validators: {
                             notEmpty: {
@@ -230,6 +279,159 @@ _payWithPaytm.directive("profileFormValidation", ["profileFactory", "config", "$
             });
         }
     }]);
+
+
+
+_payWithPaytm.directive("paymentsFormValidation", ["profileFactory", "config", "$cookies", "$cookieStore", "$location",
+        function (profileFactory, config, $cookies, $cookieStore, $location) {
+        return function (scope, element, attrs) {
+            scope.loading = true;
+            scope.profileFormDiv = false;
+            var submitProfileForm = function (form) {
+
+                var formData = new FormData();
+                console.log(scope);
+                formData.append("first_name", scope.first_name);
+                formData.append("middle_name", scope.middle_name);
+                formData.append("last_name", scope.last_name);
+                formData.append("email", scope.user_email);
+                formData.append("mobile", scope.user_mobile);
+                formData.append("session_token", $cookies.paytm_session_key);
+                var updateUrl = config.API_HOST + appConstants.UPDATE_SELLER;
+                scope.profileFormDiv = true;
+                scope.loading = false;
+                profileFactory.profileFormSubmit(formData, updateUrl).success(function (response) {
+                    if (response.status == 0) {
+                        scope.loading = true;
+                        scope.profileFormDiv = false;
+                        $location.path("/button");
+                        deleteCookie("paytm_user");
+
+                        createCookie("paytm_user", angular.toJson(response.data), 40);
+                        $location.path("/button");
+                    } else {
+                        scope.loading = true;
+                        $location.path("/products");
+                    }
+                });
+
+            };
+
+            var deleteCookie = function (name) {
+                createCookie(name, "", -1);
+            };
+
+            var createCookie = function (name, value, days) {
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    var expires = "; expires=" + date.toGMTString();
+                } else var expires = "";
+                document.cookie = name + "=" + value + expires + ";domain=." + window.location.hostname + "; path=/";
+
+            }
+            $(element[0]).bootstrapValidator({
+                message: 'This value is not valid',
+                submitHandler: function (validator, form) {
+
+                    console.log("submit handler called");
+                    submitProfileForm(form);
+
+                },
+                fields: {
+                    bank_name: {
+
+                        validators: {
+                            notEmpty: {
+                                message: 'Bank Name is required and can\'t be empty'
+                            },
+                            regexp: {
+                                regexp: /^[a-zA-Z ]*$/,
+                                message: 'The Bank name can only consist of alphabets'
+                            }
+
+
+                        }
+                    },
+                    branch_name: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Branch name can not be empty'
+                            }
+                            
+
+                        }
+                    },
+                    beneficiary_name: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Beneficiary name can not be empty'
+                            },
+                            regexp: {
+                                regexp: /^[a-zA-Z ]*$/,
+                                message: 'Beneficiary name should be string'
+                            }
+                        }
+                    },
+                    account_name: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Please add account name'
+                            },
+                            regexp: {
+                                regexp: /^[a-zA-Z0-9]*$/,
+                                message: 'Beneficiary name should be alphanumeric'
+                            }
+
+
+                        }
+                    },
+
+                    ifsc_code: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Ifsc code is required'
+                            },
+                            regexp: {
+                                regexp: /^[a-zA-Z0-9]*$/,
+                                message: 'Beneficiary name should be alphanumeric'
+                            }
+
+
+                        }
+                    },
+                    type_of_account: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Type of account is required'
+                            }
+
+
+                        }
+                    },
+                    user_mobile: {
+                        validators: {
+                            notEmpty: {
+                                message: 'User mobile can not be empty'
+                            },
+                            digits: {
+                                message: 'The value can contain only digits'
+                            }
+
+                        }
+                    }
+
+
+
+
+                }
+            });
+        }
+    }]);
+
+
+
+
 _payWithPaytm.directive('fileModel', ['$parse',
     function ($parse) {
         return {

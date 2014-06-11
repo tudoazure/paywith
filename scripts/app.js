@@ -226,10 +226,9 @@ _payWithPaytm.config(["$routeProvider", "$provide", "AnalyticsProvider", "$httpP
                     // On response success
                     response: function (response) {
                         console.log(response.status); // Contains the data from the response.
-                        if (response.status === 1) {
-                            $location.path('/logout');
-                        }
-                        if (response.status === 132) {
+
+
+                        if (response.status === 132 || response.status === 117 || response.status === 1) {
                             $location.path('/logout');
                             console.log("seller does not exist");
                         }

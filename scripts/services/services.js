@@ -17,15 +17,33 @@ _payWithPaytm.service('authService', ['$cookies', '$rootScope',
             return $cookies.paytm_session_key;
         },
         this.isProfileComplete = function () {
+            var is_profile = angular.fromJson($cookies.is_profile);
             var profile = angular.fromJson($cookies.paytm_user);
-            if (profile === undefined) {
-                return false;
-            } else {
+            console.log(profile);
+            if (is_profile === undefined) {
 
-                if (profile.first_name == undefined || profile.first_name == "") {
+                if (profile === undefined) {
                     return false;
                 } else {
+                    if (profile.first_name == undefined || profile.first_name == "") {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+
+            } else {
+
+                if (is_profile === 0) {
+                    console.log("profile is now updated");
                     return true;
+                } else {
+
+                    if (profile.first_name == undefined || profile.first_name == "") {
+                        return false;
+                    } else {
+                        return true;
+                    }
                 }
             }
 

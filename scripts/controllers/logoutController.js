@@ -6,11 +6,14 @@ _payWithPaytm.controller("logoutController", ["$scope", "$location", "$cookies",
         $cookieStore.remove("ses_user");
         $cookieStore.remove("paytm_user");
         $cookieStore.remove("transaction_id");
+        $cookieStore.remove("is_profile");
 
         deleteCookie("paytm_session_key");
         deleteCookie("ses_user");
         deleteCookie("paytm_user");
         deleteCookie("transaction_id");
+        deleteCookie("is_profile");
+
 
 
         $location.path('/login');

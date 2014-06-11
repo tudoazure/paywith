@@ -91,7 +91,7 @@ _payWithPaytm.controller('buttonController', ["$scope", "$location", "$routePara
             //has to be removed on enabling pagination
             $scope.paginationDiv = true;
 
-            buttonPaginationCtrl($scope, formData, buttonUrl, buttonFactory, buttonService);
+            buttonPaginationCtrl($scope, formData, buttonUrl, buttonFactory, buttonService, $location);
 
             if ($scope.limit) {
                 $scope.prevLimit = $scope.limit;
@@ -110,7 +110,7 @@ _payWithPaytm.controller('buttonController', ["$scope", "$location", "$routePara
                 console.log("prev limit :" + $scope.prevLimit);
                 if (!$scope.prevLimit) {
                     buttonUrl = config.API_HOST + appConstants.BUTTON_LIST + "?&" + $scope.future;
-                    buttonPaginationCtrl($scope, formData, buttonUrl, buttonFactory, buttonService);
+                    buttonPaginationCtrl($scope, formData, buttonUrl, buttonFactory, buttonService, $location);
                     if ($scope.limit == true) {
                         $scope.prevLimit = true;
                         $scope.nextLimit = false;
@@ -127,7 +127,7 @@ _payWithPaytm.controller('buttonController', ["$scope", "$location", "$routePara
                 if (!$scope.nextLimit) {
                     buttonUrl = config.API_HOST + appConstants.BUTTON_LIST + "?" + $scope.past;
 
-                    buttonPaginationCtrl($scope, formData, buttonUrl, buttonFactory, buttonService);
+                    buttonPaginationCtrl($scope, formData, buttonUrl, buttonFactory, buttonService, $location);
 
                     if ($scope.limit == true) {
 
@@ -222,7 +222,7 @@ _payWithPaytm.controller('buttonController', ["$scope", "$location", "$routePara
 
 
 
-var buttonPaginationCtrl = function ($scope, formData, buttonUrl, buttonFactory, buttonService) {
+var buttonPaginationCtrl = function ($scope, formData, buttonUrl, buttonFactory, buttonService, $location) {
 
     buttonFactory.buttonList(formData, buttonUrl).success(function (response) {
         if (response.status == 117) {
@@ -266,7 +266,7 @@ var buttonPaginationCtrl = function ($scope, formData, buttonUrl, buttonFactory,
 };
 
 //for minification
-buttonPaginationCtrl.$inject = ["$scope", "formData", "buttonUrl", "buttonactory"];
+buttonPaginationCtrl.$inject = ["$scope", "formData", "buttonUrl", "buttonactory", "$location"];
 
 
 

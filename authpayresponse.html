@@ -53,7 +53,7 @@
             __get_auth_token(param, function(response){
                 
                 
-                createCookie("paytm_session_key", response.data.session.access_token, 10); 
+                createCookie("paytm_session_key", response.data.session.session_token, 10); 
                 createCookie("ses_user", response.data.user.username, 10);
                 createCookie("paytm_user", JSON.stringify(response.data.user), 10);
                 window.location.href = appConfig.APP_HOST + "payment_details_finish.html";

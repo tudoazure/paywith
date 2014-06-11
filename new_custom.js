@@ -4,6 +4,7 @@ function __get_auth_token(param, authresponse) {
 
     var postData = "request_code=" + param.code + "&is_seller=" + param.is_seller + "&device_type=" + param.device_type + "&device_id=" + param.device_id + "&device_token=" + param.device_token + "&device_detail=" + param.device_detail;
 
+
     ajaxPostRequest(postData, appConstants.GET_OAUTH_TOKEN, function (data) {
         authresponse(data);
 
@@ -36,6 +37,10 @@ function ajaxPostRequest(formData, url, response) {
     });
 
 };
+
+/*
+ *utility methods
+ */
 
 function createCookie(name, value, days) {
     if (days) {
@@ -73,10 +78,10 @@ function __get_parameter_by_name(name) {
 
 
 function logOut() {
+    eraseCookie("session_token");
     eraseCookie("dg_transaction_id");
-    eraseCookie("paytm_session_key");
-    eraseCookie("paytm_user");
-    eraseCookie("ses_user");
+    eraseCookie("b_transaction_id");
+    eraseCookie("device_type");
     showFirstPage();
 }
 
@@ -163,13 +168,15 @@ function showFirstPage(){
 	        createCookie("ses_user", response.data.user.username, 10);
 	        createCookie("paytm_user", JSON.stringify(response.data.user), 10);
             //to be removed
-            window.paytm_session_key = response.data.session.access_token;
-            window.ses_user = response.data.user.username;
-            window.paytm_user = JSON.stringify(response.data.user);
-            getWalletBalance(true);
+            // window.paytm_session_key = response.data.session.access_token;
+            // window.ses_user = response.data.user.username;
+            // window.paytm_user = JSON.stringify(response.data.user);
+            getWalletBalance();
         }else{
             showError('username',response.message);
         }
+    }else{
+    	console.log(xmlhttp.readyState)
     }
  };
 
@@ -214,7 +221,7 @@ function showFirstPage(){
  	if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
  		var response = JSON.parse(xmlhttp.responseText);
  		if(response.status == 0 && response.message.toLowerCase() == 'success'){
- 			console.log('mail sent');
+ 			alert('mail sent');
  		}else{
  			showError('username',response.message)
  		}
@@ -265,7 +272,7 @@ function showFirstPage(){
  			}
  			var url = appConfig.API_HOST +  appConstants.USER_FORGOT_PASSWORD;
  			xmlhttp.open("POST",url,true);
- 			xmlhttp.setRequestHeader("Content-type",false);
+ 			xmlhttp.setRequestHeader("Content-type","application/json");
  			xmlhttp.send(JSON.stringify({"email":username}));
  		}else{
  			showError('username', 'Please enter your email')
@@ -273,14 +280,14 @@ function showFirstPage(){
  	}
  };
 
- function getWalletBalance(async){
-    var token = window.paytm_session_key;//readCookie("paytm_session_key");
+ function getWalletBalance(){
+    var token = readCookie("paytm_session_key"); //window.paytm_session_key;
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function(){
         walletBalanceCallback(xmlhttp);
     }
     var url = appConfig.API_HOST + appConstants.USER_WALLET_BALANCE;
-    xmlhttp.open("POST",url,async);
+    xmlhttp.open("POST",url,true);
     xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     xmlhttp.send("session_token="+token);
  };
@@ -294,14 +301,16 @@ function showFirstPage(){
                 openWalletForm(balance);
             }
         }else{
-            console.log(response.message);
+            showError('emailId',response.message)
         }
     }
  };
 
  function openWalletForm(balance){
     var price = document.getElementById('product-price').innerHTML.trim();
-    var paytm_user = window.paytm_user;//readCookie("paytm_user")
+    if(!paytm_user){
+        paytm_user = readCookie('paytm_user'); //window.paytm_user;
+    }
     paytm_user =  JSON.parse(paytm_user);
     var username =  paytm_user.first_name ? paytm_user.first_name + paytm_user.last_name : paytm_user.email;
     var div = document.createElement('div');
@@ -325,7 +334,7 @@ function showFirstPage(){
  	div.className ="form-group";
  	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
         <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
- 		<div class='msg label1'><span id='username-error' class='error'></span></div>\
+ 		<div class='msg mL10'><span id='username-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='getPassword()' value='Submit'/>\
  		<div class='width95 mt10' align = 'center'><span class='gry-6'> We will send a link on your registered email </span></div>\
         <div class='width95 mt10' align = 'center'><a href='#' onclick='showLogInForm()'> Sign In </a></div>";
@@ -338,12 +347,12 @@ function showFirstPage(){
  	div.id = "loginForm";
  	div.className ="form-group";
  	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
-        <label class='label1'>Email</label>\
+        <label class='label'>Email</label>\
         <input type='text' name='username' id='username' class='form-control field' placeholder='Enter your Email' />\
- 		<div class='msg label1'><span id='username-error' class='error'></span></div>\
-        <label class='label1'>Password</label>\
+ 		<div class='msg label'><span id='username-error' class='error'></span></div>\
+        <label class='label'>Password</label>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Paytm Password'/>\
- 		<div class='msg label1'><span id='password-error' class='error'></span></div>\
+ 		<div class='msg label'><span id='password-error' class='error'></span></div>\
  		<div class='width95 mt10 mb10' align = 'center'> <a href='#' onclick='showforgetPwdForm()'> Forget Password?</a></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='loginFormValidate()' value='Sign In'/>\
  		<div class='width95' align = 'center'><span class='gry-6'> Don't have an account? <a href='#' onclick='showSignUpForm()'> Sign Up</a></span></div> ";
@@ -355,86 +364,92 @@ function showFirstPage(){
  	div.id = "signForm";
  	div.className ="form-group";
  	div.innerHTML = "<div align='center' class='heading'>Pay with Paytm</div>\
-        <label class='label1'>Mobile Number</label>\
+        <label class='label'>Mobile Number</label>\
         <input type='text' name='username' id='mobileNumber' class='form-control field' placeholder='Enter your Mobile Number' />\
- 		<div class='msg label1'><span id='mobileNumber-error' class='error'></span></div>\
-        <label class='label1'>Email</label>\
+ 		<div class='msg label'><span id='mobileNumber-error' class='error'></span></div>\
+        <label class='label'>Email</label>\
  		<input type='text' id='emailId' class='form-control field' placeholder='Enter your Email ID' />\
- 		<div class='msg label1'><span id='emailId-error' class='error'></span></div>\
-        <label class='label1'>Password</label>\
+ 		<div class='msg label'><span id='emailId-error' class='error'></span></div>\
+        <label class='label'>Password</label>\
  		<input type='password' name='password' id='password' class='form-control field' placeholder = 'Create your Paytm Password'/>\
- 		<div class='msg label1'><span id='password-error' class='error'></span></div>\
+ 		<div class='msg label'><span id='password-error' class='error'></span></div>\
  		<input type='submit' class='btn btn-primary field form-control' onclick='signUp()' value='Create Account'/>\
  		<div class='width95' align = 'center'><span class='gry-6'> Already have an account? <a href='#' onclick='showLogInForm()'> Sign In</a></span></div> ";
  	changeView(div);
  };
 
  function checkLogIn(){
+    if(window.paytm_session_key){
+        return window.paytm_session_key;
+    }
+    return null;
  	var session_cookie = readCookie("paytm_session_key");
- 	return session_cookie;
+    if(session_cookie){
+        return session_cookie
+    }
+ 	return null;
  };
 
  function signUpSignInLinksHtml(){
- 		var div = document.createElement('div');
- 		div.className = 'signup-nav';
-        div.innerHTML = '<div class="signup-text" align="center">To continue, you need an account!</div>\
-                        <ul class="menu-nav">\
-                            <li class="active" onclick="showLogInForm()"><a>Sign In</a></li>\
-                            <li onclick="showSignUpForm()"><a>Sign Up</a></li>\
-                        </ul>';
- 		return div;
- 	
+	var div = document.createElement('div');
+	div.className = 'signup-nav';
+    div.innerHTML = '<div class="signup-text" align="center">\
+    To continue, you need an account!</div>\
+    <ul class="menu-nav"><li class="active" onclick="showLogInForm()"><a>Sign In</a></li>\
+    <li onclick="showSignUpForm()"><a>Sign Up</a></li></ul>';
+	return div;
  };
 
 function getProductHtml (productData){
 	var maincontainer = document.getElementById("sell-digital");
-    if (productData.status == 0) {
-        if (productData.data.status == 'ACTIVE') {
-            var c_params = productData.data.custom_params;
-            var media = productData.data.media;
-            var productHtml = "<div class='product-img-container' style='background-image: url("+media.preview_image+")'>\
-                    <div class='paytm-logo-right'></div>\
-                    <h3 class='product-title'>"+ productData.data.title + "</h3>\
-                    <span class='product-desc'>" + productData.data.description + "</span>\
-                    <div class='product-price'><span class='WebRupee'>&#x20B9;</span> <span id='product-price'>" +  productData.data.amount + "</span></div>\
-                </div>";
-            var productDiv = document.getElementById('prod_pay_details');
-            productDiv.innerHTML = productHtml;
-            $.each(c_params, function (key, value) {
-                if (key != "" && key != null) {
-                    intId = intId + 1;
-                    var input = document.createElement("input");
-                    input.type = "text";
-                    input.className = "form-control field";
-                    input.name = "custom_name_" + intId;
-                    input.id = "custom_name_" + intId;
-                    input.placeholder = key;
-                    input.rel = key;
-                    document.getElementById("custom-forms-editable").appendChild(input);
-                }
-            });
-            if(checkLogIn()){
-                getWalletBalance(false);
-            }
-            //code for showing SignUP and SignIn Button
-			var buttonDiv = signUpSignInLinksHtml();
-			if(buttonDiv){
-				document.getElementById("custom-forms-editable").appendChild(buttonDiv);
-			}
-        } else {
-            maincontainer.innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
-        }
+            if (productData.status == 0) {
+                if (productData.data.status == 'ACTIVE') {
+                    var c_params = productData.data.custom_params;
+                    var media = productData.data.media;
+                    var productHtml = "<div class='product-img-container' style='background-image: url("+media.preview_image+")'>\
+                            <div class='paytm-logo-right'></div>\
+                            <h3 class='product-title'>"+ productData.data.title + "</h3>\
+                            <span class='product-desc'>" + productData.data.description + "</span>\
+                            <div class='product-price'><span class='WebRupee'>&#x20B9;</span> <span id='product-price'>" +  productData.data.amount + "</span></div>\
+                        </div>";
+                     var productDiv = document.getElementById('prod_pay_details');
+                     productDiv.innerHTML = productHtml;
+                    $.each(c_params, function (key, value) {
+                        if (key != "" && key != null) {
+                            intId = intId + 1;
+                            var input = document.createElement("input");
+                            input.type = "text";
+                            input.className = "form-control";
+                            input.name = "custom_name_" + intId;
+                            input.id = "custom_name_" + intId;
+                            input.placeholder = key;
+                            input.rel = key;
+                            document.getElementById("custom-forms-editable").appendChild(input);
+                        }
+                    });
+					//code for showing SignUP and SignIn Button
+                    var buttonDiv = signUpSignInLinksHtml();
+                    if(buttonDiv){
+                        document.getElementById("custom-forms-editable").appendChild(buttonDiv);
+                    }
+                    if(checkLogIn()){
+					   getWalletBalance();
+                    }
 
-    } else {
-        maincontainer.innerHTML = "<p>" + productData.message + "</p>";
-    }
+                } else {
+                    maincontainer.innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
+                }
+
+            } else {
+                maincontainer.innerHTML = "<p>" + productData.message + "</p>";
+            }
 };
 
 function _pay_now_submit() {
     var div = document.getElementById('custom-forms-editable');
     var $inputs = div.getElementsByTagName('input');
     console.log($inputs);
-    var user = window.paytm_user;//readCookie('paytm_user') // todo need to change
+    var user = readCookie('paytm_user') // todo need to change
     if(user){
         user = JSON.parse(user);
     }
@@ -455,130 +470,137 @@ function _pay_now_submit() {
     var c_params = JSON.stringify(cp);
     document.getElementById("view").innerHTML = "";
     document.getElementById("view").innerHTML = "<div class='text-center'>\
-                                                    <img src='"+appConfig.APP_HOST+"assets/images/spinner-md.gif'>\
-                                                </div>";
+        <img src='"+appConfig.APP_HOST+"assets/images/spinner-md.gif'>\
+    </div>";
+    
     var session_token = readCookie("paytm_session_key");
     var device_type = 'desktop-browser';
     // if(device.mobile()){
     //     device_type = 'mobile-browser';
     // }
-
-    // Why
-    eraseCookie("transaction_id");
-
     var formData = new FormData();
     formData.append("id", pbid);
     formData.append("d_email", email);
     formData.append("custom_params", c_params);
     formData.append("device_type", device_type);
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = function(){
-        checkoutCB(request);
-    }
-    request.open("POST", appConfig.API_HOST + appConstants.START_TRANSACTION);
-    request.send(formData);
+
+    eraseCookie("transaction_id");
+     __start_transaction(formData);
+    
 };
 
-function checkoutCB(request){
-    if (request.readyState == 4 && request.status == 200){
-        var txnResponse = JSON.parse(request.responseText);
-        if(txnResponse.status == 0){
-            console.log("transaction successful" + txnResponse.data.transaction_id);
-            createCookie("dg_transaction_id", txnResponse.data.transaction_id);
-            __finish_transaction(txnResponse.data.transaction_id);
-        }
-        else {
-            if(txnResponse.status === 121){
-                document.getElementById("view").innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
+function __start_transaction(data){
+    $.ajax({
+        url: appConfig.API_HOST + appConstants.START_TRANSACTION,
+        type: "POST",
+        data: data,
+        processData: false, // tell jQuery not to process the data
+        contentType: false,
+        success: function (responseData) {
+            console.log("start transaction response  data " + responseData);
+            var txnResponse = $.parseJSON(responseData);
+            if (txnResponse.status == 0) {
+                console.log("transaction successful" + txnResponse.data.transaction_id);
+                createCookie("dg_transaction_id", txnResponse.data.transaction_id);
+                __finish_transaction(txnResponse.data.transaction_id);
+                
             } else {
-                document.getElementById("view").innerHTML ="<p>"+txnResponse.message+ "</p>";
+                if(txnResponse.status === 121){
+                    document.getElementById("view").innerHTML = "<p class=\"text-center\"><h4>This product is disabled.</h4></p><p class=\"text-center\"><img src=\"" + appConfig.APP_HOST + "assets/images/disabled.jpg" + "\" class=\"img-responsive\"></p>";
+                } else {
+                    console.log("reansaction unsuccessful");
+                    document.getElementById("view").innerHTML ="<p>"+txnResponse.message+ "</p>";
+                }
             }
         }
-    }else{
-        console.log(request.readyState)
-    }
+    });
 };
 
 function __finish_transaction(transaction_id){
-    var session_cookie = window.paytm_session_key;//readCookie("paytm_session_key");//todo need to change
-     var session_cookie = window.paytm_session_key;//readCookie("paytm_session_key");//todo need to change
+    var session_cookie = readCookie("paytm_session_key");//todo need to change
     if (session_cookie == null) {
         showLogInForm();
-    } 
-    else {
-        var device_type = 'desktop-browser'; 
-        // if(device.mobile()){ device_type = 'mobile-browser'; } //todo need to change
-        var formData = new FormData();
-        //var transaction_id = readCookie("dg_transaction_id");//to do need to check
-        formData.append("transaction_id", transaction_id);
-        formData.append("session_token", session_cookie);
-        formData.append("device_type", device_type);
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function(){
-            openPGPage(request);
-        }
-        request.open("POST", appConfig.API_HOST + appConstants.FINISH_TRANSACTION);
-        request.send(formData);
-    }
-};
+    } else {
+                var device_type = 'desktop-browser'; 
+                // if(device.mobile()){ device_type = 'mobile-browser'; } //todo need to change
+                var formData = new FormData();
+                //var transaction_id = readCookie("dg_transaction_id");//to do need to check
+                formData.append("transaction_id", transaction_id);
+                formData.append("session_token", session_cookie);
+                formData.append("device_type", device_type);
+                
+         $.ajax({
+        url: appConfig.API_HOST + appConstants.FINISH_TRANSACTION,
+        type: "POST",
+        data: formData,
+        processData: false, // tell jQuery not to process the data
+        contentType: false,
+        success: function (responseData) {
+            console.log("finish transaction  response data " + responseData);
+            var txnResponse = $.parseJSON(responseData);
+            if (txnResponse.status == 0) {
+                console.log("transaction successful");
+                // if(device.mobile()){ //todo
+                //     $("#sell-digital").html("<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p><p><a href=\"#\" onclick=\"javascript:window.open('','_self').close();\">Close</a></p></div>");        
+                // } else {
+                    document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
+                // }
+                
+            } else if(txnResponse.status == 1001){
+                console.log("insufficient balance");  
+                var form_data = txnResponse.data.html_form;
+                var ifrm = document.createElement("IFRAME");
+                ifrm.name = 'myiframe';
+                ifrm.id = 'myiframe';
+                ifrm.style.width = 100 +"%";
+                ifrm.style.height = 100 +"%";
+                
+                document.getElementById('view').innerHTML = form_data;
+                document.getElementById('view').appendChild(ifrm);
+                var form = document.getElementsByTagName('form');
+                form[0].target = ifrm.name;
+                var script = document.getElementById('view').getElementsByTagName('script');
+                if(script){
+                    eval(script[0].text);
+                }
 
-function openPGPage(request){
-    if (request.readyState == 4 && request.status == 200){
-        var txnResponse = JSON.parse(request.responseText);
-        if(txnResponse.status == 0){
-            document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
-        }
-        else if(txnResponse.status == 1001){
-            var form_data = txnResponse.data.html_form;
-            var ifrm = document.createElement("IFRAME");
-            ifrm.name = 'myiframe';
-            ifrm.id = 'myiframe';
-            ifrm.style.width = 100 +"%";
-            ifrm.style.height = 100 +"%";
-            
-            document.getElementById('view').innerHTML = form_data;
-            document.getElementById('view').appendChild(ifrm);
-            var form = document.getElementsByTagName('form');
-            form[0].target = ifrm.name;
-            var script = document.getElementById('view').getElementsByTagName('script');
-            if(script){
-                eval(script[0].text);
+                // document.getElementById('view').appendChild(form_data);  
+                 // $("#view").html(form_data);
+            } else {
+                console.log("transaction failed");
+                if(txnResponse.message){
+                   document.getElementById("view").innerHTML = "<p>"+txnResponse.message+ "</p>"; 
+               }else{
+                    document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
+               }
+                
+                
+             
             }
-
-            // document.getElementById('view').appendChild(form_data);  
-             // $("#view").html(form_data);
-        } else {
-            console.log("transaction failed");
-            if(txnResponse.message){
-               document.getElementById("view").innerHTML = "<p>"+txnResponse.message+ "</p>"; 
-           }else{
-                document.getElementById("view").innerHTML = "<div class=\"span6 text-center\"><p>Thank you for your purchase. A link to the file has been emailed to you.</p></div>";
-           }
         }
-    }else{
-        console.log(request.readyState)
+    });
     }
 }
-
-
-function getProductDetails(pbid){
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function(){
-        getProductDetailsCB(xmlHttp);
-    }
-    var url = appConfig.API_HOST + appConstants.GET_MERCHANDISE_INFO + pbid + "/";
-    xmlHttp.open("GET", url,false);
-    xmlHttp.send(null);
-}
-
- function getProductDetailsCB(xmlHttp){
-    if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
-        var productData = JSON.parse(xmlHttp.responseText);
-        getProductHtml(productData);
-    }
- };
-
 //New Code End
+
+function __get_pay_prod_details(__pbid__) {
+
+    $.ajax({
+        url: appConfig.API_HOST + appConstants.GET_MERCHANDISE_INFO + __pbid__ + "/",
+        type: "GET",
+        processData: false, // tell jQuery not to process the data
+        contentType: false,
+        success: function (data) {
+            var productData = $.parseJSON(data);
+            getProductHtml(productData);
+        },
+        error: function(error){
+        	var response = '{"status": 0, "message": "Success", "data": {"status": "ACTIVE", "custom_params": {}, "description": "The go-to book for the modern designer, starting at the basics and taking you right the way through to being able to create stunning iconography.", "title": "The Icon Handbook", "merchandise_type": "", "media": {"preview_thumb": "", "preview_image": "https://s3.amazonaws.com/pwppub/preview/cf199f3e58"}, "created_on": 1401124613912, "max_downloads": 5, "watermark_enabled": true, "payee": 31, "amount": 1.00, "display_tags": true, "extra_params": {}, "updated_on": 1401297934123, "button_id": "bafbab7cb4"}, "extra": {}}'
+        	var productData = $.parseJSON(response);
+        	getProductHtml(productData);
+        }
+    });
+}
 
 
 //device js
